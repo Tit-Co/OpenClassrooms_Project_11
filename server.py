@@ -53,7 +53,11 @@ def purchasePlaces():
     club = [c for c in clubs if c['name'] == request.form['club']][0]
     placesRequired = int(request.form['places'])
 
-    if placesRequired > 12:
+    if placesRequired < 0:
+        flash("Sorry, you should type a positive number.")
+        return render_template('welcome.html', club=club, competitions=competitions, error="Negative number"), 403
+
+    elif placesRequired > 12:
         flash("Sorry, you are not allow to purchase more than 12 places.")
         return render_template('welcome.html', club=club, competitions=competitions, error="Places max reached"), 403
 

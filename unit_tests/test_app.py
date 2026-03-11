@@ -5,7 +5,8 @@ from unit_tests.conftest import (client, get_existing_mail, get_existing_mail_2,
                                  get_unexisting_mail, get_existing_competition_and_club,
                                  get_existing_competition_and_club_2,
                                  get_consistent_purchasing_data, get_inconsistent_purchasing_data,
-                                 get_inconsistent_purchasing_data_over_12_places)
+                                 get_inconsistent_purchasing_data_over_12_places,
+                                 get_inconsistent_purchasing_data_with_negative_places)
 
 from server import clubs, competitions
 
@@ -132,7 +133,8 @@ def test_good_purchasing_places_returns_summary_page(client):
           f'            {the_competition["name"]}<br/>\n'
           f'            Date: 2020-03-27 10:00:00\n'
           f'            Number of Places: {new_competition_places}\n            \n'
-          f'            <a href="/book/{the_competition_name_utf8}/{the_club_name_utf8}">Book Places</a>\n'
+          f'            <a href="/book/{the_competition_name_utf8}/'
+          f'{the_club_name_utf8}">Book Places</a>\n'
           f'</li>')
 
     assert "Great-booking complete!" in data
@@ -203,4 +205,36 @@ def test_purchasing_places_with_over_12_places_returns_sorry(client):
     data = response.data.decode('utf-8')
 
     assert "Sorry, you are not allow to purchase more than 12 places." in data
+    assert f"Points available: {club_points}" in data
+
+def test_purchasing_places_with_negative_number_status_code_error(client):
+    mail_data = get_existing_mail()
+    client.post('/showSummary', data=mail_data)
+    competition_and_club_data = get_existing_competition_and_club()
+    client.get(url_for(endpoint='book',
+                       competition=competition_and_club_data['competition'],
+                       club=competition_and_club_data['club']))
+
+    purchasing_data = get_inconsistent_purchasing_data_with_negative_places()
+
+    response = client.post('/purchasePlaces', data=purchasing_data)
+
+    assert response.status_code == 403
+
+def test_purchasing_places_with_negative_number_returns_sorry(client):
+    mail_data = get_existing_mail()
+    client.post('/showSummary', data=mail_data)
+    competition_and_club_data = get_existing_competition_and_club()
+    client.get(url_for(endpoint='book',
+                       competition=competition_and_club_data['competition'],
+                       club=competition_and_club_data['club']))
+
+    purchasing_data = get_inconsistent_purchasing_data_with_negative_places()
+    the_club = [club for club in clubs if club["name"] == purchasing_data['club']][0]
+    club_points = the_club['points']
+
+    response = client.post('/purchasePlaces', data=purchasing_data)
+    data = response.data.decode('utf-8')
+
+    assert "Sorry, you should type a positive number." in data
     assert f"Points available: {club_points}" in data

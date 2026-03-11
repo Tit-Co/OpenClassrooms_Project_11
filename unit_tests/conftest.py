@@ -54,3 +54,11 @@ def get_inconsistent_purchasing_data_over_12_places():
     data = {"competition": competition, "club": club_name, "places": str(places_to_book)}
 
     return data
+
+def get_inconsistent_purchasing_data_with_negative_places():
+    competition = "Spring Festival"
+    club_name = "She Lifts"
+    places_to_book = -2
+    data = {"competition": competition, "club": club_name, "places": str(places_to_book)}
+
+    return data
