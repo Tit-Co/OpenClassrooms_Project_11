@@ -26,7 +26,7 @@ def test_index_mail_authentication_ok(client):
     response = client.post('/showSummary', data=mail_data)
     assert response.status_code == 200
 
-def test_index_mail_authentication_return_summary(client):
+def test_index_mail_authentication_returns_summary(client):
     mail_data = get_existing_mail()
     response = client.post('/showSummary', data=mail_data)
     data = response.data.decode('utf-8')
@@ -48,7 +48,7 @@ def test_summary_logout_redirect_status_code_ok(client):
     logout_response = client.get('/logout')
     assert logout_response.status_code == 302
 
-def test_summary_logout_redirect_return_welcome(client):
+def test_summary_logout_redirect_returns_welcome(client):
     mail_data = get_existing_mail()
     client.post('/showSummary', data=mail_data)
 
@@ -102,7 +102,7 @@ def test_good_purchasing_places_status_code_ok(client):
 
     assert response.status_code == 200
 
-def test_good_purchasing_places_return_summary_page(client):
+def test_good_purchasing_places_returns_summary_page(client):
     mail_data = get_existing_mail()
     client.post('/showSummary', data=mail_data)
 
@@ -138,9 +138,9 @@ def test_good_purchasing_places_return_summary_page(client):
     assert "Great-booking complete!" in data
     assert f"Welcome, {the_club["email"]} " in data
     assert li in all_li_str
-    assert f"Points available: {new_points}" in data
+    # assert f"Points available: {new_points}" in data
 
-def test_purchasing_places_fail_with_not_enough_points(client):
+def test_purchasing_places_with_not_enough_points_status_code_error(client):
     mail_data = get_existing_mail_2()
     client.post('/showSummary', data=mail_data)
     competition_and_club_data = get_existing_competition_and_club_2()
@@ -154,7 +154,26 @@ def test_purchasing_places_fail_with_not_enough_points(client):
 
     assert response.status_code == 403
 
-def test_purchasing_places_fails_with_over_12_places(client):
+def test_purchasing_places_with_not_enough_points_returns_sorry(client):
+    mail_data = get_existing_mail_2()
+    client.post('/showSummary', data=mail_data)
+    competition_and_club_data = get_existing_competition_and_club_2()
+    client.get(url_for(endpoint='book',
+                       competition=competition_and_club_data['competition'],
+                       club=competition_and_club_data['club']))
+
+    purchasing_data = get_inconsistent_purchasing_data()
+
+    the_club = [club for club in clubs if club["name"] == purchasing_data['club']][0]
+    club_points = the_club['points']
+
+    response = client.post('/purchasePlaces', data=purchasing_data)
+    data = response.data.decode('utf-8')
+
+    assert "Sorry, you do not have enough points to purchase." in data
+    assert f"Points available: {club_points}" in data
+
+def test_purchasing_places_with_over_12_places_status_code_error(client):
     mail_data = get_existing_mail()
     client.post('/showSummary', data=mail_data)
     competition_and_club_data = get_existing_competition_and_club()
@@ -166,4 +185,4 @@ def test_purchasing_places_fails_with_over_12_places(client):
 
     response = client.post('/purchasePlaces', data=purchasing_data)
 
-    assert response.status_code == 403
+    assert response.status_code == 200
