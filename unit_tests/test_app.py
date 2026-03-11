@@ -185,4 +185,22 @@ def test_purchasing_places_with_over_12_places_status_code_error(client):
 
     response = client.post('/purchasePlaces', data=purchasing_data)
 
-    assert response.status_code == 200
+    assert response.status_code == 403
+
+def test_purchasing_places_with_over_12_places_returns_sorry(client):
+    mail_data = get_existing_mail()
+    client.post('/showSummary', data=mail_data)
+    competition_and_club_data = get_existing_competition_and_club()
+    client.get(url_for(endpoint='book',
+                       competition=competition_and_club_data['competition'],
+                       club=competition_and_club_data['club']))
+
+    purchasing_data = get_inconsistent_purchasing_data_over_12_places()
+    the_club = [club for club in clubs if club["name"] == purchasing_data['club']][0]
+    club_points = the_club['points']
+
+    response = client.post('/purchasePlaces', data=purchasing_data)
+    data = response.data.decode('utf-8')
+
+    assert "Sorry, you are not allow to purchase more than 12 places." in data
+    assert f"Points available: {club_points}" in data
