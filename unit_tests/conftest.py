@@ -2,7 +2,7 @@ import pytest
 
 from random import randint
 
-from server import app, clubs
+from server import app
 
 @pytest.fixture
 def client():
@@ -36,12 +36,12 @@ def get_competitions():
         {
             "name": "Fall Classic",
             "date": "2020-10-22 13:30:00",
-            "numberOfPlaces": "13"
+            "number_of_places": "13"
         },
         {
             "name": "Spring Festival",
             "date": "2020-03-27 10:00:00",
-            "numberOfPlaces": "25"
+            "number_of_places": "25"
         }
     ]
     return the_competitions

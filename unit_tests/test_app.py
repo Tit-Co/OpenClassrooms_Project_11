@@ -130,7 +130,7 @@ def test_good_purchasing_places_returns_summary_page(mocker, client, get_existin
                        club=the_club['name']))
 
     club_points = the_club['points']
-    competition_places = the_competition['numberOfPlaces']
+    competition_places = the_competition['number_of_places']
 
     mocker.patch('server.save_clubs')
     mocker.patch('server.save_competitions')
