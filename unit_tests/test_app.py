@@ -202,7 +202,7 @@ def test_purchasing_places_over_12_places_status_code_error(mocker,
                                                             client,
                                                             get_existing_mail,
                                                             get_existing_competition_and_club,
-                                                            purchasing_data_over_12_places,
+                                                            purchasing_over_12_places,
                                                             get_clubs):
     mocker.patch('server.clubs', get_clubs)
 
@@ -211,7 +211,7 @@ def test_purchasing_places_over_12_places_status_code_error(mocker,
                        competition=get_existing_competition_and_club['competition'],
                        club=get_existing_competition_and_club['club']))
 
-    response = client.post('/purchasePlaces', data=purchasing_data_over_12_places)
+    response = client.post('/purchasePlaces', data=purchasing_over_12_places)
 
     assert response.status_code == 403
 
@@ -219,7 +219,7 @@ def test_purchasing_places_over_12_places_returns_sorry(mocker,
                                                         client,
                                                         get_existing_mail,
                                                         get_existing_competition_and_club,
-                                                        purchasing_data_over_12_places,
+                                                        purchasing_over_12_places,
                                                         get_clubs):
     mocker.patch('server.clubs', get_clubs)
 
@@ -229,7 +229,31 @@ def test_purchasing_places_over_12_places_returns_sorry(mocker,
                        competition=get_existing_competition_and_club['competition'],
                        club=get_existing_competition_and_club['club']))
 
-    purchasing_data = purchasing_data_over_12_places
+    purchasing_data = purchasing_over_12_places
+    the_club = [club for club in server.clubs if club["name"] == purchasing_data['club']][0]
+    club_points = the_club['points']
+
+    response = client.post('/purchasePlaces', data=purchasing_data)
+    data = response.data.decode('utf-8')
+
+    assert "Sorry, you are not allow to purchase more than 12 places for this competition." in data
+    assert f"Points available: {club_points}" in data
+
+def test_purchasing_places_over_12_cumulative_places_returns_sorry(mocker,
+                                                                   client,
+                                                                   get_existing_mail,
+                                                                   get_existing_competition_and_club,
+                                                                   purchasing_13_cumulative_places,
+                                                                   get_clubs):
+    mocker.patch('server.clubs', get_clubs)
+
+    client.post('/showSummary', data=get_existing_mail)
+
+    client.get(url_for(endpoint='book',
+                       competition=get_existing_competition_and_club['competition'],
+                       club=get_existing_competition_and_club['club']))
+
+    purchasing_data = purchasing_13_cumulative_places
     the_club = [club for club in server.clubs if club["name"] == purchasing_data['club']][0]
     club_points = the_club['points']
 
@@ -244,7 +268,7 @@ def test_purchasing_places_negative_number_status_code_error(mocker,
                                                              get_existing_mail,
                                                              get_existing_competition_and_club,
                                                              get_clubs,
-                                                             purchasing_data_with_negative_places):
+                                                             purchasing_with_negative_places):
 
     mocker.patch('server.clubs', get_clubs)
 
@@ -254,7 +278,7 @@ def test_purchasing_places_negative_number_status_code_error(mocker,
                        competition=get_existing_competition_and_club['competition'],
                        club=get_existing_competition_and_club['club']))
 
-    purchasing_data = purchasing_data_with_negative_places
+    purchasing_data = purchasing_with_negative_places
 
     response = client.post('/purchasePlaces', data=purchasing_data)
 
@@ -264,7 +288,7 @@ def test_purchasing_places_negative_number_returns_sorry(mocker,
                                                          client,
                                                          get_existing_mail,
                                                          get_existing_competition_and_club,
-                                                         purchasing_data_with_negative_places,
+                                                         purchasing_with_negative_places,
                                                          get_clubs):
     mocker.patch('server.clubs', get_clubs)
 
@@ -274,7 +298,7 @@ def test_purchasing_places_negative_number_returns_sorry(mocker,
                        competition=get_existing_competition_and_club['competition'],
                        club=get_existing_competition_and_club['club']))
 
-    purchasing_data = purchasing_data_with_negative_places
+    purchasing_data = purchasing_with_negative_places
     the_club = [club for club in server.clubs if club["name"] == purchasing_data['club']][0]
     club_points = the_club['points']
 

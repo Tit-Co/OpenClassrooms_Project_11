@@ -25,7 +25,10 @@ def get_clubs():
     },
     {   "name":"She Lifts",
         "email": "kate@shelifts.co.uk",
-        "points":"12"
+        "points":"12",
+        "booked_places": {
+                            "Spring Festival": "7"
+                        }
     }
     ]
     return the_clubs
@@ -75,7 +78,7 @@ def get_existing_competition_and_club_2():
 def get_consistent_purchasing_data():
     competition = "Spring Festival"
     club_name = "She Lifts"
-    places_to_book = randint(1, 12)
+    places_to_book = randint(1, 5)
     data = {"competition": competition, "club": club_name, "places": str(places_to_book)}
 
     return data
@@ -91,7 +94,7 @@ def get_inconsistent_purchasing_data():
     return data
 
 @pytest.fixture
-def purchasing_data_over_12_places():
+def purchasing_over_12_places():
     competition = "Spring Festival"
     club_name = "She Lifts"
     places_to_book = 13
@@ -100,7 +103,16 @@ def purchasing_data_over_12_places():
     return data
 
 @pytest.fixture
-def purchasing_data_with_negative_places():
+def purchasing_13_cumulative_places():
+    competition = "Spring Festival"
+    club_name = "She Lifts"
+    places_to_book = 6
+    data = {"competition": competition, "club": club_name, "places": str(places_to_book)}
+
+    return data
+
+@pytest.fixture
+def purchasing_with_negative_places():
     competition = "Spring Festival"
     club_name = "She Lifts"
     places_to_book = -2

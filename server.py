@@ -22,6 +22,10 @@ clubs = load_clubs()
 def update_club_booked_places(club, places, competition_name):
     clubs.remove(club)
 
+    club.setdefault("booked_places", {})
+    current = int(club["booked_places"].get(competition_name, 0))
+    club["booked_places"][competition_name] = str(current + places)
+
     club["points"] = str(int(club["points"]) - places)
 
     clubs.append(club)
@@ -66,7 +70,6 @@ def show_summary():
 @app.route('/book/<competition>/<club>')
 def book(competition, club):
     found_club = [c for c in clubs if c['name'] == club][0]
-    print(f"COMPETITIONS : {competitions}")
     found_competition = [c for c in competitions if c['name'] == competition][0]
     if found_club and found_competition:
         return render_template(template_name_or_list='booking.html',
@@ -85,6 +88,9 @@ def purchase_places():
     club = [c for c in clubs if c['name'] == request.form['club']][0]
     places_required = int(request.form['places'])
 
+    cumulative_places = places_required + int(club["booked_places"][competition["name"]]) \
+        if "booked_places" in club else places_required
+
     if places_required < 0:
         flash("Sorry, you should type a positive number.")
         return render_template(template_name_or_list='welcome.html',
@@ -92,7 +98,7 @@ def purchase_places():
                                competitions=competitions,
                                error="Negative number"), 403
 
-    elif places_required > 12:
+    elif cumulative_places > 12:
         flash("Sorry, you are not allow to purchase more than 12 places for this competition.")
         return render_template(template_name_or_list='welcome.html',
                                club=club,
