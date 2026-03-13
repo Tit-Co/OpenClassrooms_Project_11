@@ -43,7 +43,7 @@ def get_competitions():
         },
         {
             "name": "Spring Festival",
-            "date": "2020-03-27 10:00:00",
+            "date": "2026-07-27 10:00:00",
             "number_of_places": "25"
         }
     ]
@@ -72,6 +72,11 @@ def get_existing_competition_and_club():
 @pytest.fixture
 def get_existing_competition_and_club_2():
     data = {"competition": "Spring Festival", "club": "Iron Temple"}
+    return data
+
+@pytest.fixture
+def get_existing_competition_and_club_3():
+    data = {"competition": "Fall Classic", "club": "Iron Temple"}
     return data
 
 @pytest.fixture

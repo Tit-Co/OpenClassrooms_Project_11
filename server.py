@@ -1,3 +1,4 @@
+from datetime import datetime
 import json
 from flask import Flask, render_template, request, redirect, flash, url_for
 
@@ -71,7 +72,20 @@ def show_summary():
 def book(competition, club):
     found_club = [c for c in clubs if c['name'] == club][0]
     found_competition = [c for c in competitions if c['name'] == competition][0]
-    if found_club and found_competition:
+
+    now = datetime.now()
+
+    competition_date = datetime.strptime(found_competition['date'], '%Y-%m-%d %H:%M:%S')
+
+    if now > competition_date:
+        flash("Sorry, this competition is outdated. Booking not possible.")
+        the_club = next((a_club for a_club in clubs if a_club['name'] == club), None)
+        return render_template(template_name_or_list='welcome.html',
+                               club=the_club,
+                               competitions=competitions,
+                               error = "Competition outdated"), 403
+
+    elif found_club and found_competition:
         return render_template(template_name_or_list='booking.html',
                                club=found_club,
                                competition=found_competition)
@@ -118,7 +132,7 @@ def purchase_places():
 
     update_competition_available_places(competition=competition, places=places_required)
 
-    flash('Great-booking complete!')
+    flash(f'Great-booking complete!')
     return render_template(template_name_or_list='welcome.html',
                            club=club,
                            competitions=competitions)
