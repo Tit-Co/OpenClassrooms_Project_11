@@ -1,8 +1,11 @@
-from Scripts.bottle import response
 from bs4 import BeautifulSoup
 from flask import url_for
 
 import server
+
+def patch_clubs_and_competitions(mocker, get_clubs, get_competitions):
+    mocker.patch('server.clubs', get_clubs)
+    mocker.patch('server.competitions', get_competitions)
 
 def test_index_status_code_ok(client):
     client_response = client.get('/')
@@ -67,8 +70,7 @@ def test_booking_status_code_ok(mocker,
                                 get_clubs,
                                 get_competitions):
 
-    mocker.patch('server.clubs', get_clubs)
-    mocker.patch('server.competitions', get_competitions)
+    patch_clubs_and_competitions(mocker, get_clubs, get_competitions)
 
     client.post('/showSummary', data=get_existing_mail)
 
@@ -85,8 +87,7 @@ def test_booking_return_festival_page_booking(mocker,
                                               get_clubs,
                                               get_competitions):
 
-    mocker.patch('server.clubs', get_clubs)
-    mocker.patch('server.competitions', get_competitions)
+    patch_clubs_and_competitions(mocker, get_clubs, get_competitions)
 
     client.post('/showSummary', data=get_existing_mail)
 
@@ -106,8 +107,7 @@ def test_good_purchasing_places_status_code_ok(mocker,
                                                get_clubs,
                                                get_competitions):
 
-    mocker.patch('server.clubs', get_clubs)
-    mocker.patch('server.competitions', get_competitions)
+    patch_clubs_and_competitions(mocker, get_clubs, get_competitions)
 
     client.post('/showSummary', data=get_existing_mail)
     client.get(url_for(endpoint='book',
@@ -125,8 +125,7 @@ def test_good_purchasing_places_returns_summary_page(mocker, client, get_existin
                                                      get_consistent_purchasing_data,
                                                      get_competitions):
 
-    mocker.patch('server.clubs', get_clubs)
-    mocker.patch('server.competitions', get_competitions)
+    patch_clubs_and_competitions(mocker, get_clubs, get_competitions)
 
     client.post('/showSummary', data=get_existing_mail)
 
@@ -176,8 +175,7 @@ def test_purchasing_places_not_enough_points_status_code_error(mocker,
                                                                get_clubs,
                                                                get_competitions):
 
-    mocker.patch('server.clubs', get_clubs)
-    mocker.patch('server.competitions', get_competitions)
+    patch_clubs_and_competitions(mocker, get_clubs, get_competitions)
 
     client.post('/showSummary', data=get_existing_mail_2)
     client.get(url_for(endpoint='book',
@@ -195,8 +193,8 @@ def test_purchasing_places_not_enough_points_returns_sorry(mocker,
                                                            get_inconsistent_purchasing_data,
                                                            get_clubs,
                                                            get_competitions):
-    mocker.patch('server.clubs', get_clubs)
-    mocker.patch('server.competitions', get_competitions)
+
+    patch_clubs_and_competitions(mocker, get_clubs, get_competitions)
 
     client.post('/showSummary', data=get_existing_mail_2)
     client.get(url_for(endpoint='book',
@@ -219,8 +217,8 @@ def test_purchasing_places_over_12_places_status_code_error(mocker,
                                                             purchasing_over_12_places,
                                                             get_clubs,
                                                             get_competitions):
-    mocker.patch('server.clubs', get_clubs)
-    mocker.patch('server.competitions', get_competitions)
+
+    patch_clubs_and_competitions(mocker, get_clubs, get_competitions)
 
     client.post('/showSummary', data=get_existing_mail)
     client.get(url_for(endpoint='book',
@@ -238,8 +236,8 @@ def test_purchasing_places_over_12_places_returns_sorry(mocker,
                                                         purchasing_over_12_places,
                                                         get_clubs,
                                                         get_competitions):
-    mocker.patch('server.clubs', get_clubs)
-    mocker.patch('server.competitions', get_competitions)
+
+    patch_clubs_and_competitions(mocker, get_clubs, get_competitions)
 
     client.post('/showSummary', data=get_existing_mail)
 
@@ -264,8 +262,8 @@ def test_purchasing_places_over_12_cumulative_places_returns_sorry(mocker,
                                                                    purchasing_13_cumulative_places,
                                                                    get_clubs,
                                                                    get_competitions):
-    mocker.patch('server.clubs', get_clubs)
-    mocker.patch('server.competitions', get_competitions)
+
+    patch_clubs_and_competitions(mocker, get_clubs, get_competitions)
 
     client.post('/showSummary', data=get_existing_mail)
 
@@ -291,8 +289,7 @@ def test_purchasing_places_negative_number_status_code_error(mocker,
                                                              purchasing_with_negative_places,
                                                              get_competitions):
 
-    mocker.patch('server.clubs', get_clubs)
-    mocker.patch('server.competitions', get_competitions)
+    patch_clubs_and_competitions(mocker, get_clubs, get_competitions)
 
     client.post('/showSummary', data=get_existing_mail)
 
@@ -313,8 +310,8 @@ def test_purchasing_places_negative_number_returns_sorry(mocker,
                                                          purchasing_with_negative_places,
                                                          get_clubs,
                                                          get_competitions):
-    mocker.patch('server.clubs', get_clubs)
-    mocker.patch('server.competitions', get_competitions)
+
+    patch_clubs_and_competitions(mocker, get_clubs, get_competitions)
 
     client.post('/showSummary', data=get_existing_mail)
 
@@ -339,8 +336,7 @@ def test_purchasing_places_past_competitions_status_code_error(mocker,
                                                                get_clubs,
                                                                get_competitions):
 
-    mocker.patch('server.clubs', get_clubs)
-    mocker.patch('server.competitions', get_competitions)
+    patch_clubs_and_competitions(mocker, get_clubs, get_competitions)
 
     client.post('/showSummary', data=get_existing_mail)
 
@@ -356,8 +352,8 @@ def test_purchasing_places_past_competitions_returns_sorry(mocker,
                                                            get_existing_competition_and_club_3,
                                                            get_clubs,
                                                            get_competitions):
-    mocker.patch('server.clubs', get_clubs)
-    mocker.patch('server.competitions', get_competitions)
+
+    patch_clubs_and_competitions(mocker, get_clubs, get_competitions)
 
     client.post('/showSummary', data=get_existing_mail)
 
