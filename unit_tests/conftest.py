@@ -55,6 +55,11 @@ def get_competitions():
             "name": "Winter Power",
             "date": "2026-06-26 12:16:00",
             "number_of_places": "4"
+        },
+        {
+            "name": "Summer Stronger",
+            "date": "2026-05-30 18:23:40",
+            "number_of_places": "0"
         }
     ]
     return the_competitions
@@ -91,7 +96,7 @@ def get_existing_competition_and_club_3():
 
 @pytest.fixture
 def get_existing_competition_and_club_4():
-    data = {"competition": "Winter Power", "club": "Power Lift"}
+    data = {"competition": "Summer Stronger", "club": "Power Lift"}
     return data
 
 @pytest.fixture

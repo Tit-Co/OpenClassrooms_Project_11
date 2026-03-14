@@ -77,20 +77,37 @@ def book(competition, club):
 
     competition_date = datetime.strptime(found_competition['date'], '%Y-%m-%d %H:%M:%S')
 
+    error_message = ""
+    error_tag = ""
+
+    the_competition = next((a_competition for a_competition in competitions
+                            if a_competition['name'] == competition), None)
+    competition_places = int(the_competition['number_of_places'])
+
     if now > competition_date:
-        flash("Sorry, this competition is outdated. Booking not possible.")
+        error_message = "Sorry, this competition is outdated. Booking not possible."
+        error_tag = "Outdated"
+
+    elif competition_places == 0:
+        error_message = "Sorry, this competition is sold out. Booking not possible."
+        error_tag = "Sold out"
+
+    if error_message and error_tag:
+        flash(error_message)
+
         the_club = next((a_club for a_club in clubs if a_club['name'] == club), None)
+
         return render_template(template_name_or_list='welcome.html',
                                club=the_club,
                                competitions=competitions,
-                               error = "Outdated"), 403
+                               error=error_tag), 403
 
-    elif found_club and found_competition:
+    if found_club and found_competition:
         return render_template(template_name_or_list='booking.html',
                                club=found_club,
                                competition=found_competition)
     else:
-        flash("Something went wrong-please try again")
+        flash("Sorry, something went wrong. Please try again.")
         return render_template(template_name_or_list='welcome.html',
                                club=club,
                                competitions=competitions)

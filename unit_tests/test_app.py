@@ -223,6 +223,7 @@ def test_purchasing_places_over_12_places_status_code_error(mocker,
     patch_clubs_and_competitions(mocker, get_clubs, get_competitions)
 
     client.post('/showSummary', data=get_existing_mail)
+
     client.get(url_for(endpoint='book',
                        competition=get_existing_competition_and_club['competition'],
                        club=get_existing_competition_and_club['club']))
@@ -234,7 +235,6 @@ def test_purchasing_places_over_12_places_status_code_error(mocker,
 def test_purchasing_places_over_12_places_returns_sorry(mocker,
                                                         client,
                                                         get_existing_mail,
-                                                        get_existing_competition_and_club,
                                                         purchasing_over_12_places,
                                                         get_clubs,
                                                         get_competitions):
@@ -243,11 +243,12 @@ def test_purchasing_places_over_12_places_returns_sorry(mocker,
 
     client.post('/showSummary', data=get_existing_mail)
 
-    client.get(url_for(endpoint='book',
-                       competition=get_existing_competition_and_club['competition'],
-                       club=get_existing_competition_and_club['club']))
-
     purchasing_data = purchasing_over_12_places
+
+    client.get(url_for(endpoint='book',
+                       competition=purchasing_data['competition'],
+                       club=purchasing_data['club']))
+
     the_club = [club for club in server.clubs if club["name"] == purchasing_data['club']][0]
     club_points = the_club['points']
 
@@ -261,7 +262,6 @@ def test_purchasing_places_over_12_places_returns_sorry(mocker,
 def test_purchasing_places_over_12_cumulative_places_returns_sorry(mocker,
                                                                    client,
                                                                    get_existing_mail,
-                                                                   get_existing_competition_and_club,
                                                                    purchasing_13_cumulative_places,
                                                                    get_clubs,
                                                                    get_competitions):
@@ -270,11 +270,12 @@ def test_purchasing_places_over_12_cumulative_places_returns_sorry(mocker,
 
     client.post('/showSummary', data=get_existing_mail)
 
-    client.get(url_for(endpoint='book',
-                       competition=get_existing_competition_and_club['competition'],
-                       club=get_existing_competition_and_club['club']))
-
     purchasing_data = purchasing_13_cumulative_places
+
+    client.get(url_for(endpoint='book',
+                       competition=purchasing_data['competition'],
+                       club=purchasing_data['club']))
+
     the_club = [club for club in server.clubs if club["name"] == purchasing_data['club']][0]
     club_points = the_club['points']
 
@@ -288,7 +289,6 @@ def test_purchasing_places_over_12_cumulative_places_returns_sorry(mocker,
 def test_purchasing_places_negative_number_status_code_error(mocker,
                                                              client,
                                                              get_existing_mail,
-                                                             get_existing_competition_and_club,
                                                              get_clubs,
                                                              purchasing_with_negative_places,
                                                              get_competitions):
@@ -297,11 +297,11 @@ def test_purchasing_places_negative_number_status_code_error(mocker,
 
     client.post('/showSummary', data=get_existing_mail)
 
-    client.get(url_for(endpoint='book',
-                       competition=get_existing_competition_and_club['competition'],
-                       club=get_existing_competition_and_club['club']))
-
     purchasing_data = purchasing_with_negative_places
+
+    client.get(url_for(endpoint='book',
+                       competition=purchasing_data['competition'],
+                       club=purchasing_data['club']))
 
     client_response = client.post('/purchasePlaces', data=purchasing_data)
 
@@ -310,7 +310,6 @@ def test_purchasing_places_negative_number_status_code_error(mocker,
 def test_purchasing_places_negative_number_returns_sorry(mocker,
                                                          client,
                                                          get_existing_mail,
-                                                         get_existing_competition_and_club,
                                                          purchasing_with_negative_places,
                                                          get_clubs,
                                                          get_competitions):
@@ -319,11 +318,12 @@ def test_purchasing_places_negative_number_returns_sorry(mocker,
 
     client.post('/showSummary', data=get_existing_mail)
 
-    client.get(url_for(endpoint='book',
-                       competition=get_existing_competition_and_club['competition'],
-                       club=get_existing_competition_and_club['club']))
-
     purchasing_data = purchasing_with_negative_places
+
+    client.get(url_for(endpoint='book',
+                       competition=purchasing_data['competition'],
+                       club=purchasing_data['club']))
+
     the_club = [club for club in server.clubs if club["name"] == purchasing_data['club']][0]
     club_points = the_club['points']
 
@@ -373,7 +373,6 @@ def test_purchasing_places_past_competitions_returns_sorry(mocker,
 def test_purchasing_places_over_available_status_code_error(mocker,
                                                             client,
                                                             get_existing_mail,
-                                                            get_existing_competition_and_club_4,
                                                             get_clubs,
                                                             get_competitions,
                                                             purchasing_places_more_than_available):
@@ -382,11 +381,11 @@ def test_purchasing_places_over_available_status_code_error(mocker,
 
     client.post('/showSummary', data=get_existing_mail)
 
-    client.get(url_for(endpoint='book',
-                       competition=get_existing_competition_and_club_4['competition'],
-                       club=get_existing_competition_and_club_4['club']))
-
     purchasing_data = purchasing_places_more_than_available
+
+    client.get(url_for(endpoint='book',
+                       competition=purchasing_data['competition'],
+                       club=purchasing_data['club']))
 
     client_response = client.post('/purchasePlaces', data=purchasing_data)
 
@@ -395,7 +394,6 @@ def test_purchasing_places_over_available_status_code_error(mocker,
 def test_purchasing_places_over_available_returns_sorry(mocker,
                                                         client,
                                                         get_existing_mail,
-                                                        get_existing_competition_and_club_4,
                                                         purchasing_places_more_than_available,
                                                         get_clubs,
                                                         get_competitions):
@@ -404,11 +402,12 @@ def test_purchasing_places_over_available_returns_sorry(mocker,
 
     client.post('/showSummary', data=get_existing_mail)
 
-    client.get(url_for(endpoint='book',
-                       competition=get_existing_competition_and_club_4['competition'],
-                       club=get_existing_competition_and_club_4['club']))
-
     purchasing_data = purchasing_places_more_than_available
+
+    client.get(url_for(endpoint='book',
+                       competition=purchasing_data['competition'],
+                       club=purchasing_data['club']))
+
     the_club = [club for club in server.clubs if club["name"] == purchasing_data['club']][0]
     club_points = the_club['points']
 
@@ -418,3 +417,23 @@ def test_purchasing_places_over_available_returns_sorry(mocker,
     assert f"Welcome, {the_club["email"]} " in data
     assert "Sorry, there are not enough places available for this competition." in data
     assert f"Points available: {club_points}" in data
+
+def test_purchasing_places_sold_out_status_code_error(mocker,
+                                                      client,
+                                                      get_existing_mail,
+                                                      get_existing_competition_and_club_4,
+                                                      get_clubs,
+                                                      get_competitions):
+
+    patch_clubs_and_competitions(mocker, get_clubs, get_competitions)
+
+    client.post('/showSummary', data=get_existing_mail)
+
+    client_response = client.get(url_for(endpoint='book',
+                       competition=get_existing_competition_and_club_4['competition'],
+                       club=get_existing_competition_and_club_4['club']))
+
+    data = client_response.data.decode('utf-8')
+
+    assert client_response.status_code == 403
+    assert "Sorry, this competition is sold out. Booking not possible." in data
