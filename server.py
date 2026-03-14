@@ -83,7 +83,7 @@ def book(competition, club):
         return render_template(template_name_or_list='welcome.html',
                                club=the_club,
                                competitions=competitions,
-                               error = "Competition outdated"), 403
+                               error = "Outdated"), 403
 
     elif found_club and found_competition:
         return render_template(template_name_or_list='booking.html',
@@ -105,26 +105,31 @@ def purchase_places():
     cumulative_places = places_required + int(club["booked_places"][competition["name"]]) \
         if "booked_places" in club else places_required
 
+    error_message = ""
+    error_tag = ""
+
     if places_required < 0:
-        flash("Sorry, you should type a positive number.")
-        return render_template(template_name_or_list='welcome.html',
-                               club=club,
-                               competitions=competitions,
-                               error="Negative number"), 403
+        error_message = "Sorry, you should type a positive number."
+        error_tag = "Negative number"
 
     elif cumulative_places > 12:
-        flash("Sorry, you are not allow to purchase more than 12 places for this competition.")
-        return render_template(template_name_or_list='welcome.html',
-                               club=club,
-                               competitions=competitions,
-                               error="Places max reached"), 403
+        error_message = "Sorry, you are not allow to purchase more than 12 places for this competition."
+        error_tag = "Over 12 places"
+
+    elif places_required > int(competition['number_of_places']):
+        error_message = "Sorry, there are not enough places available for this competition."
+        error_tag = "Not enough places"
 
     elif places_required > int(club['points']):
-        flash("Sorry, you do not have enough points to purchase.")
+        error_message = "Sorry, you do not have enough points to purchase."
+        error_tag = "Not enough points"
+
+    if error_message and error_tag:
+        flash(error_message)
         return render_template(template_name_or_list='welcome.html',
                                club=club,
                                competitions=competitions,
-                               error="Points not enough"), 403
+                               error=error_tag), 403
 
     update_club_booked_places(club=club,
                               places=places_required,
@@ -132,7 +137,9 @@ def purchase_places():
 
     update_competition_available_places(competition=competition, places=places_required)
 
-    flash(f'Great-booking complete!')
+    flash(f"Great! Booking of {places_required} places for "
+          f"{competition['name']} competition complete!")
+
     return render_template(template_name_or_list='welcome.html',
                            club=club,
                            competitions=competitions)

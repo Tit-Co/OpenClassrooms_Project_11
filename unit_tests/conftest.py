@@ -29,6 +29,11 @@ def get_clubs():
         "booked_places": {
                             "Spring Festival": "7"
                         }
+    },
+    {
+        "name": "Power Lift",
+        "email": "admin@powerlift.com",
+        "points": "5"
     }
     ]
     return the_clubs
@@ -45,6 +50,11 @@ def get_competitions():
             "name": "Spring Festival",
             "date": "2026-07-27 10:00:00",
             "number_of_places": "25"
+        },
+        {
+            "name": "Winter Power",
+            "date": "2026-06-26 12:16:00",
+            "number_of_places": "4"
         }
     ]
     return the_competitions
@@ -77,6 +87,11 @@ def get_existing_competition_and_club_2():
 @pytest.fixture
 def get_existing_competition_and_club_3():
     data = {"competition": "Fall Classic", "club": "Iron Temple"}
+    return data
+
+@pytest.fixture
+def get_existing_competition_and_club_4():
+    data = {"competition": "Winter Power", "club": "Power Lift"}
     return data
 
 @pytest.fixture
@@ -121,6 +136,15 @@ def purchasing_with_negative_places():
     competition = "Spring Festival"
     club_name = "She Lifts"
     places_to_book = -2
+    data = {"competition": competition, "club": club_name, "places": str(places_to_book)}
+
+    return data
+
+@pytest.fixture
+def purchasing_places_more_than_available():
+    competition = "Winter Power"
+    club_name = "Power Lift"
+    places_to_book = 5
     data = {"competition": competition, "club": club_name, "places": str(places_to_book)}
 
     return data

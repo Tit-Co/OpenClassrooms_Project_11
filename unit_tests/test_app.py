@@ -162,7 +162,8 @@ def test_good_purchasing_places_returns_summary_page(mocker, client, get_existin
           f'{the_club_name_utf8}">Book Places</a>\n'
           f'</li>')
 
-    assert "Great-booking complete!" in data
+    assert (f"Great! Booking of {purchasing_data['places']} places for "
+            f"{purchasing_data['competition']} competition complete!") in data
     assert f"Welcome, {the_club["email"]} " in data
     assert li in all_li_str
     assert f"Points available: {new_points}" in data
@@ -207,6 +208,7 @@ def test_purchasing_places_not_enough_points_returns_sorry(mocker,
     client_response = client.post('/purchasePlaces', data=get_inconsistent_purchasing_data)
     data = client_response.data.decode('utf-8')
 
+    assert f"Welcome, {the_club["email"]} " in data
     assert "Sorry, you do not have enough points to purchase." in data
     assert f"Points available: {the_club['points']}" in data
 
@@ -252,6 +254,7 @@ def test_purchasing_places_over_12_places_returns_sorry(mocker,
     client_response = client.post('/purchasePlaces', data=purchasing_data)
     data = client_response.data.decode('utf-8')
 
+    assert f"Welcome, {the_club["email"]} " in data
     assert "Sorry, you are not allow to purchase more than 12 places for this competition." in data
     assert f"Points available: {club_points}" in data
 
@@ -278,6 +281,7 @@ def test_purchasing_places_over_12_cumulative_places_returns_sorry(mocker,
     client_response = client.post('/purchasePlaces', data=purchasing_data)
     data = client_response.data.decode('utf-8')
 
+    assert f"Welcome, {the_club["email"]} " in data
     assert "Sorry, you are not allow to purchase more than 12 places for this competition." in data
     assert f"Points available: {club_points}" in data
 
@@ -326,6 +330,7 @@ def test_purchasing_places_negative_number_returns_sorry(mocker,
     client_response = client.post('/purchasePlaces', data=purchasing_data)
     data = client_response.data.decode('utf-8')
 
+    assert f"Welcome, {the_club["email"]} " in data
     assert "Sorry, you should type a positive number." in data
     assert f"Points available: {club_points}" in data
 
@@ -364,3 +369,52 @@ def test_purchasing_places_past_competitions_returns_sorry(mocker,
     data = client_response.data.decode('utf-8')
 
     assert "Sorry, this competition is outdated. Booking not possible." in data
+
+def test_purchasing_places_over_available_status_code_error(mocker,
+                                                            client,
+                                                            get_existing_mail,
+                                                            get_existing_competition_and_club_4,
+                                                            get_clubs,
+                                                            get_competitions,
+                                                            purchasing_places_more_than_available):
+
+    patch_clubs_and_competitions(mocker, get_clubs, get_competitions)
+
+    client.post('/showSummary', data=get_existing_mail)
+
+    client.get(url_for(endpoint='book',
+                       competition=get_existing_competition_and_club_4['competition'],
+                       club=get_existing_competition_and_club_4['club']))
+
+    purchasing_data = purchasing_places_more_than_available
+
+    client_response = client.post('/purchasePlaces', data=purchasing_data)
+
+    assert client_response.status_code == 403
+
+def test_purchasing_places_over_available_returns_sorry(mocker,
+                                                        client,
+                                                        get_existing_mail,
+                                                        get_existing_competition_and_club_4,
+                                                        purchasing_places_more_than_available,
+                                                        get_clubs,
+                                                        get_competitions):
+
+    patch_clubs_and_competitions(mocker, get_clubs, get_competitions)
+
+    client.post('/showSummary', data=get_existing_mail)
+
+    client.get(url_for(endpoint='book',
+                       competition=get_existing_competition_and_club_4['competition'],
+                       club=get_existing_competition_and_club_4['club']))
+
+    purchasing_data = purchasing_places_more_than_available
+    the_club = [club for club in server.clubs if club["name"] == purchasing_data['club']][0]
+    club_points = the_club['points']
+
+    client_response = client.post('/purchasePlaces', data=purchasing_data)
+    data = client_response.data.decode('utf-8')
+
+    assert f"Welcome, {the_club["email"]} " in data
+    assert "Sorry, there are not enough places available for this competition." in data
+    assert f"Points available: {club_points}" in data
