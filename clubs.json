@@ -2,30 +2,27 @@
     "clubs": [
         {
             "name": "Simply Lift",
-            "email": "john@simplylift.co",
-            "password": "pbkdf2:sha256:150000$8BTKb0Yl$c040ad52566882eac8a429b09be47e180f71a026b55f41c4cde6c1b15cd44adc",
+            "email": "john@simplylift.co.uk",
+            "password": "pbkdf2:sha256:150000$hRdMG3j8$75089df7d666a0a804b2ab30832ee5ead0af0f9da1a16792aebb227f26736140",
             "points": "13"
         },
         {
             "name": "Iron Temple",
             "email": "admin@irontemple.com",
-            "password": "pbkdf2:sha256:150000$0OZMEHCy$0b1641c4f5eb8fa277738155f1b2dd2cd54708eecdb2a0d907b904c7f40bc10d",
+            "password": "pbkdf2:sha256:150000$vRos0Pry$191eef653bbe787936e8329844c04c082ea74f91ed2da129ed0258a9cf4f0b62",
             "points": "4"
-        },
-        {
-            "name": "She Lifts",
-            "email": "kate@shelifts.co.uk",
-            "password": "tp5_Tmn50",
-            "points": "12",
-            "booked_places": {
-                "Spring Festival": "7"
-            }
         },
         {
             "name": "Power Lift",
             "email": "admin@powerlift.com",
-            "password": "pbkdf2:sha256:150000$2d5MVukB$2d6fa64ec0e446a7f7e6f447ebc631c98aeec6c216df67750f0000a247b0d05f",
+            "password": "pbkdf2:sha256:150000$NSg2p4vF$e817bb5a870bf4fea7e0687a9afe4b620a6ba2402d6190450d13407b00e39848",
             "points": "5"
+        },
+        {
+            "name": "She Lifts",
+            "email": "kate@shelifts.co.uk",
+            "password": "pbkdf2:sha256:150000$8LvMXlh1$84c53ce7ad7b0adb694806647bc1fd7f2c748b5e3a41d5ad76f515c148e86252",
+            "points": "12"
         }
     ]
 }
