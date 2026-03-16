@@ -79,6 +79,11 @@ def get_credentials_2():
     return data
 
 @pytest.fixture
+def get_credentials_3():
+    data = {"email": "admin@powerlift.com", "password": "tp4_Tmn40"}
+    return data
+
+@pytest.fixture
 def get_unexisting_credentials():
     data = {"email": "nicolas.marie@unexisting.com", "password": "er45_shet"}
     return data

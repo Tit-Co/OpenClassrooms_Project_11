@@ -2,7 +2,7 @@ import pytest
 import server
 
 from werkzeug.security import check_password_hash
-from flask import url_for
+from flask import url_for, session
 
 
 class TestUnitApp:
@@ -86,7 +86,10 @@ class TestUnitApp:
 
     @staticmethod
     def test_change_password_status_code_ok(client):
-        client_response = client.get('/changePassword/Simply Lift')
+        with client.session_transaction() as session:
+            session["club"] = "She Lifts"
+
+        client_response = client.get('/changePassword/She Lifts')
         assert client_response.status_code == 200
 
     @staticmethod
@@ -114,23 +117,29 @@ class TestUnitApp:
 
     @staticmethod
     def test_profile_ok(client):
-        client_response = client.get('/profile/Simply Lift')
+        with client.session_transaction() as session:
+            session["club"] = "She Lifts"
+
+        client_response = client.get('/profile/She Lifts')
         assert client_response.status_code == 200
 
     @staticmethod
-    def test_unexisting_profile_fails(client):
-        client_response = client.get('/profile/Unexisting Club')
-        assert client_response.status_code == 404
+    def test_profile_without_authentication_fails(client):
+        client_response = client.get('/profile/Simply Lift')
+        assert client_response.status_code == 403
 
     @staticmethod
     def test_profile_returns_welcome(client):
-        client_response = client.get('/profile/Simply Lift')
+        with client.session_transaction() as session:
+            session["club"] = "She Lifts"
+
+        client_response = client.get('/profile/She Lifts')
         data = client_response.data.decode('utf-8')
-        assert "Welcome, john@simplylift.co" in data
+        assert "Welcome, kate@shelifts.co.uk" in data
         assert "Profile:" in data
-        assert "Name : Simply Lift" in data
-        assert "Email : john@simplylift.co" in data
-        assert "Points available: 13" in data
+        assert "Name : She Lifts" in data
+        assert "Email : kate@shelifts.co.uk" in data
+        assert "Points available: 12" in data
 
     @staticmethod
     def test_update_booked_places_ok(get_existing_competition_and_club_2):

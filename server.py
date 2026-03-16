@@ -83,7 +83,7 @@ def profile(club):
         return render_template(template_name_or_list='profile.html', club=the_club)
 
     flash("Sorry, you are not allow to see that profile.")
-    return render_template(template_name_or_list='index.html')
+    return render_template(template_name_or_list='index.html', error="Not allow"), 403
 
 @app.route('/profile', methods=['POST'])
 def profile_post():
@@ -149,7 +149,7 @@ def change_password(club):
             return render_template(template_name_or_list='index.html')
 
     flash("Sorry, you are not allow to do this action.")
-    return render_template(template_name_or_list='index.html')
+    return render_template(template_name_or_list='index.html', error="Not allow"), 403
 
 
 @app.route('/showSummary/<club>', methods=['GET'])
@@ -161,7 +161,7 @@ def show_summary(club):
                                competitions=competitions)
 
     flash("Sorry, you are not allow to do this action.")
-    return render_template(template_name_or_list='index.html')
+    return render_template(template_name_or_list='index.html', error="Not allow"), 403
 
 @app.route('/showSummary', methods=['POST'])
 def show_summary_post():
@@ -183,48 +183,51 @@ def show_summary_post():
 
 @app.route('/book/<competition>/<club>')
 def book(competition, club):
-    found_club = [c for c in clubs if c['name'] == club][0]
-    found_competition = [c for c in competitions if c['name'] == competition][0]
+    if "club" in session and session['club'] == club:
+        found_club = [c for c in clubs if c['name'] == club][0]
+        found_competition = [c for c in competitions if c['name'] == competition][0]
 
-    now = datetime.now()
+        now = datetime.now()
 
-    competition_date = datetime.strptime(found_competition['date'], '%Y-%m-%d %H:%M:%S')
+        competition_date = datetime.strptime(found_competition['date'], '%Y-%m-%d %H:%M:%S')
 
-    error_message = ""
-    error_tag = ""
+        error_message = ""
+        error_tag = ""
 
-    the_competition = next((a_competition for a_competition in competitions
-                            if a_competition['name'] == competition), None)
-    competition_places = int(the_competition['number_of_places'])
+        the_competition = next((a_competition for a_competition in competitions
+                                if a_competition['name'] == competition), None)
+        competition_places = int(the_competition['number_of_places'])
 
-    if now > competition_date:
-        error_message = "Sorry, this competition is outdated. Booking not possible."
-        error_tag = "Outdated"
+        if now > competition_date:
+            error_message = "Sorry, this competition is outdated. Booking not possible."
+            error_tag = "Outdated"
 
-    elif competition_places == 0:
-        error_message = "Sorry, this competition is sold out. Booking not possible."
-        error_tag = "Sold out"
+        elif competition_places == 0:
+            error_message = "Sorry, this competition is sold out. Booking not possible."
+            error_tag = "Sold out"
 
-    if error_message and error_tag:
-        flash(error_message)
+        if error_message and error_tag:
+            flash(error_message)
 
-        the_club = next((a_club for a_club in clubs if a_club['name'] == club), None)
+            the_club = next((a_club for a_club in clubs if a_club['name'] == club), None)
 
-        return render_template(template_name_or_list='welcome.html',
-                               club=the_club,
-                               competitions=competitions,
-                               error=error_tag), 403
+            return render_template(template_name_or_list='welcome.html',
+                                   club=the_club,
+                                   competitions=competitions,
+                                   error=error_tag), 403
 
-    if found_club and found_competition:
-        return render_template(template_name_or_list='booking.html',
-                               club=found_club,
-                               competition=found_competition)
-    else:
-        flash("Sorry, something went wrong. Please try again.")
-        return render_template(template_name_or_list='welcome.html',
-                               club=club,
-                               competitions=competitions)
+        if found_club and found_competition:
+            return render_template(template_name_or_list='booking.html',
+                                   club=found_club,
+                                   competition=found_competition)
+        else:
+            flash("Sorry, something went wrong. Please try again.")
+            return render_template(template_name_or_list='welcome.html',
+                                   club=club,
+                                   competitions=competitions)
 
+    flash("Sorry, you are not allow to do this action.")
+    return render_template(template_name_or_list='index.html', error="Not allow"), 403
 
 @app.route('/purchasePlaces',methods=['POST'])
 def purchase_places():

@@ -186,10 +186,10 @@ class TestIntegrationApp:
 
     @staticmethod
     def test_purchasing_places_past_competitions_returns_sorry(client,
-                                                               get_credentials,
+                                                               get_credentials_2,
                                                                get_existing_competition_and_club_3):
 
-        client.post('/showSummary', data=get_credentials)
+        client.post('/showSummary', data=get_credentials_2)
 
         client_response = client.get(url_for(endpoint='book',
                            competition=get_existing_competition_and_club_3['competition'],
@@ -226,10 +226,12 @@ class TestIntegrationApp:
 
     @staticmethod
     def test_purchasing_places_sold_out_status_code_error(client,
-                                                          get_credentials,
+                                                          get_credentials_3,
                                                           get_existing_competition_and_club_4):
 
-        client.post('/showSummary', data=get_credentials)
+        client.post('/showSummary', data=get_credentials_3)
+        print(get_credentials_3)
+        print(get_existing_competition_and_club_4)
 
         client_response = client.get(url_for(endpoint='book',
                            competition=get_existing_competition_and_club_4['competition'],
