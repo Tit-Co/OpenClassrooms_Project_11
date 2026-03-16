@@ -276,10 +276,17 @@ def purchase_places():
     return render_template(template_name_or_list='welcome.html',
                            club=club,
                            competitions=competitions)
-
-
-# TODO: Add route for points display
-
+@app.route('/pointsBoard')
+def points_board():
+    clubs_for_board=[]
+    for club in clubs:
+        if clubs.index(club) %2 == 0:
+            club["color"] = "#cccccc"
+        else:
+            club["color"] = "#aaaaaa"
+        clubs_for_board.append(club)
+    print(clubs_for_board)
+    return render_template(template_name_or_list='points_board.html', clubs=clubs_for_board)
 
 @app.route('/logout')
 def logout():

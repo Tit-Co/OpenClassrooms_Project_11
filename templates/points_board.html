@@ -1,0 +1,31 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GUDLFT Registration</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <h1>Welcome to the GUDLFT clubs points board!</h1>
+    <br>
+    <h2>⯈ Here is the board for all the clubs and their points.</h2>
+    <div class="board">
+        <table>
+            <thead>
+                <td><div class="cell">Club</div></td>
+                <td><div class="cell">Points</div></td>
+            </thead>
+            {% for club in clubs %}
+            <tr>
+                <td><div class="cell" style="background: {{ club["color"] }};">{{ club.name }}</div></td>
+                <td><div class="cell" style="background: {{ club["color"] }};">{{ club.points }}</div></td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <br>
+    <hr>
+    To continue into the application, please <a href="{{url_for('index')}}">log in</a> or <a href="{{url_for('sign_up')}}">sign up</a>
+    <br>
+</body>
+</html>

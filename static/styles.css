@@ -1,0 +1,37 @@
+.board{
+    margin-left: 50px;
+    display: block;
+    border:1px black solid;
+    border-radius: 10px;
+    width: fit-content;
+}
+
+.board table{
+    width:400px;
+}
+
+.board table tr{
+    width: 100%;
+}
+
+.board table thead div{
+    background-color: #000000;
+    color: white;
+    font-weight: bold;
+}
+
+.board table td{
+    color: black;
+}
+
+.board table td p{
+    text-align: center;
+}
+
+.board .cell{
+    border-radius: 10px;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    padding: 5px 10px;
+}
