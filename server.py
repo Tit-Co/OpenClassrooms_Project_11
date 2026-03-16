@@ -1,6 +1,8 @@
-from datetime import datetime
 import json
+
+from datetime import datetime
 from flask import Flask, render_template, request, redirect, flash, url_for
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
 def load_clubs():
@@ -19,6 +21,8 @@ app.secret_key = 'something_special'
 
 competitions = load_competitions()
 clubs = load_clubs()
+
+CLUB_POINTS = 15
 
 def update_club_booked_places(club, places, competition_name):
     clubs.remove(club)
@@ -50,23 +54,119 @@ def save_competitions():
         list_of_competitions = {"competitions": competitions}
         json.dump(list_of_competitions, comps, indent=4)
 
+def add_club(name, email, password, points):
+    clubs.append({"name": name, "email": email, "password": password, "points": points})
+    save_clubs()
+
+def update_club_password(club, password):
+    club["password"] = password
+    save_clubs()
+    return club
+
 @app.route('/')
 def index():
     return render_template('index.html')
 
+@app.route('/signUp')
+def sign_up():
+    return render_template('sign_up.html')
+
+@app.route('/profile/<club>', methods=['GET'])
+def profile(club):
+    the_club = next((c for c in clubs if c['name'] == club), None)
+
+    if the_club is None:
+        flash("Sorry, that club was not found.")
+        return render_template(template_name_or_list="index.html", error="Club not found"), 404
+
+    return render_template(template_name_or_list='profile.html', club=the_club)
+
+@app.route('/profile', methods=['POST'])
+def profile_post():
+    club_name = request.form['name']
+    club_email = request.form['email']
+    club_password = request.form['password']
+    club_password_confirmation = request.form['confirm_password']
+
+    club_exists = next((c for c in clubs if c['email'] == club_email or c['name'] == club_name), None)
+    if club_exists is None:
+        if club_password != club_password_confirmation:
+            flash('Sorry, passwords do not match')
+            return redirect(url_for('sign_up'))
+
+        hashed_password = generate_password_hash(club_password)
+        add_club(club_name, club_email, hashed_password, str(CLUB_POINTS))
+
+        the_club = next((c for c in clubs if c['email'] == club_email), None)
+
+        if the_club is None:
+            flash("Sorry, something went wrong. Please try again.")
+            return render_template(template_name_or_list='sign_up.html')
+
+        flash("Great! You have successfully signed up.")
+        return render_template(template_name_or_list='profile.html', club=the_club)
+
+    else:
+        flash("Sorry, the club already exists.")
+        return render_template(template_name_or_list='sign_up.html')
+
+@app.route('/changePassword/<club>', methods=['GET', 'POST'])
+def change_password(club):
+    if request.method == 'GET':
+        the_club = next((c for c in clubs if c['name'] == club), None)
+
+        if the_club is None:
+            flash("Sorry, that club was not found.")
+            return render_template(template_name_or_list="index.html", error="Email not found"), 404
+
+        return render_template(template_name_or_list='change_password.html', club=the_club)
+    else:
+        club_password = request.form['password']
+        club_password_confirmation = request.form['confirm_password']
+
+        if club_password != club_password_confirmation:
+            flash('Sorry, passwords do not match')
+            return redirect(url_for('change_password'))
+
+        the_club = next((c for c in clubs if c['name'] == club), None)
+        hashed_password = generate_password_hash(club_password)
+
+        if check_password_hash(the_club['password'], club_password):
+            flash('Sorry, you have to type a new different password.')
+            return render_template(template_name_or_list='change_password.html', club=the_club)
+
+        the_club = update_club_password(the_club, hashed_password)
+
+        if the_club:
+            flash("Great! You have successfully changed your password.")
+            return render_template(template_name_or_list='profile.html', club=the_club)
+
+        flash("Sorry, something went wrong. Please try again.")
+        return render_template(template_name_or_list='index.html')
+
+
+@app.route('/showSummary/<club>', methods=['GET'])
+def show_summary(club):
+    the_club = next((c for c in clubs if c['name'] == club), None)
+    return render_template(template_name_or_list='welcome.html',
+                           club=the_club,
+                           competitions=competitions)
+
 @app.route('/showSummary', methods=['POST'])
-def show_summary():
+def show_summary_post():
+    the_club = next((c for c in clubs if c['email'] == request.form['email']), None)
 
-    club = next((club for club in clubs if club['email'] == request.form['email']), None)
-
-    if club is None:
+    if the_club is None:
         flash("Sorry, that email was not found.")
         return render_template(template_name_or_list="index.html", error="Email not found"), 404
 
-    return render_template(template_name_or_list='welcome.html',
-                           club=club,
-                           competitions=competitions)
+    if not check_password_hash(the_club['password'], request.form['password']):
+        flash("Sorry, the password is incorrect.")
+        return render_template(template_name_or_list="index.html",)
 
+    return render_template(template_name_or_list='welcome.html',
+                           club=the_club,
+                           competitions=competitions)
 
 @app.route('/book/<competition>/<club>')
 def book(competition, club):

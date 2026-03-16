@@ -26,17 +26,19 @@ class TestApp:
         data = client_response.data.decode('utf-8')
 
         assert "Welcome to the GUDLFT Registration Portal!" in data
-        assert "Please enter your secretary email to continue:" in data
+        assert ('Please enter your secretary email and your password to continue '
+                'or <a href="/signUp">sign up</a>') in data
         assert "Email:" in data
+        assert "Password:" in data
 
     @staticmethod
-    def test_index_mail_authentication_ok(get_existing_mail, mocker, client):
-        client_response = client.post('/showSummary', data=get_existing_mail)
+    def test_index_mail_authentication_ok(get_credentials, client):
+        client_response = client.post('/showSummary', data=get_credentials)
         assert client_response.status_code == 200
 
     @staticmethod
-    def test_index_mail_authentication_returns_summary(client, get_existing_mail):
-        client_response = client.post('/showSummary', data=get_existing_mail)
+    def test_index_mail_authentication_returns_summary(client, get_credentials):
+        client_response = client.post('/showSummary', data=get_credentials)
         data = client_response.data.decode('utf-8')
 
         assert "Welcome, kate@shelifts.co.uk" in data
@@ -45,21 +47,21 @@ class TestApp:
         assert "Points available: 12" in data
 
     @staticmethod
-    def test_index_mail_authentication_fail(client, get_unexisting_mail):
-        client_response = client.post('/showSummary', data=get_unexisting_mail)
+    def test_index_mail_authentication_fail(client, get_unexisting_credentials):
+        client_response = client.post('/showSummary', data=get_unexisting_credentials)
         data = client_response.data.decode('utf-8')
         assert client_response.status_code == 404
         assert "Sorry, that email was not found." in data
 
     @staticmethod
-    def test_summary_logout_redirect_status_code_ok(client, get_existing_mail):
-        client.post('/showSummary', data=get_existing_mail)
+    def test_summary_logout_redirect_status_code_ok(client, get_credentials):
+        client.post('/showSummary', data=get_credentials)
         logout_response = client.get('/logout')
         assert logout_response.status_code == 302
 
     @staticmethod
-    def test_summary_logout_redirect_returns_welcome(client, get_existing_mail):
-        client.post('/showSummary', data=get_existing_mail)
+    def test_summary_logout_redirect_returns_welcome(client, get_credentials):
+        client.post('/showSummary', data=get_credentials)
 
         logout_response = client.get('/logout')
         soup = BeautifulSoup(logout_response.data.decode(), features="html.parser")
@@ -70,15 +72,17 @@ class TestApp:
         data = redirect_response.data.decode('utf-8')
 
         assert "Welcome to the GUDLFT Registration Portal!" in data
-        assert "Please enter your secretary email to continue:" in data
+        assert ('Please enter your secretary email and your password to continue '
+                'or <a href="/signUp">sign up</a>') in data
         assert "Email:" in data
+        assert "Password:" in data
 
     @staticmethod
     def test_booking_status_code_ok(client,
-                                    get_existing_mail,
+                                    get_credentials,
                                     get_existing_competition_and_club):
 
-        client.post('/showSummary', data=get_existing_mail)
+        client.post('/showSummary', data=get_credentials)
 
         client_response = client.get(url_for(endpoint='book',
                                       competition=get_existing_competition_and_club['competition'],
@@ -88,10 +92,10 @@ class TestApp:
 
     @staticmethod
     def test_booking_return_festival_page_booking(client,
-                                                  get_existing_mail,
+                                                  get_credentials,
                                                   get_existing_competition_and_club):
 
-        client.post('/showSummary', data=get_existing_mail)
+        client.post('/showSummary', data=get_credentials)
 
         client_response = client.get(url_for(endpoint='book',
                                       competition=get_existing_competition_and_club['competition'],
@@ -103,11 +107,11 @@ class TestApp:
 
     @staticmethod
     def test_good_purchasing_places_status_code_ok(client,
-                                                   get_existing_mail,
+                                                   get_credentials,
                                                    get_existing_competition_and_club,
                                                    get_consistent_purchasing_data):
 
-        client.post('/showSummary', data=get_existing_mail)
+        client.post('/showSummary', data=get_credentials)
         client.get(url_for(endpoint='book',
                            competition=get_existing_competition_and_club['competition'],
                            club=get_existing_competition_and_club['club']))
@@ -118,10 +122,10 @@ class TestApp:
 
     @staticmethod
     def test_good_purchasing_places_returns_summary_page(client,
-                                                         get_existing_mail,
+                                                         get_credentials,
                                                          get_consistent_purchasing_data):
 
-        client.post('/showSummary', data=get_existing_mail)
+        client.post('/showSummary', data=get_credentials)
 
         purchasing_data = get_consistent_purchasing_data
         the_club = [club for club in server.clubs if club["name"] == purchasing_data['club']][0]
@@ -161,11 +165,11 @@ class TestApp:
 
     @staticmethod
     def test_purchasing_places_not_enough_points_status_code_error(client,
-                                                                   get_existing_mail_2,
+                                                                   get_credentials_2,
                                                                    get_existing_competition_and_club_2,
                                                                    get_inconsistent_purchasing_data):
 
-        client.post('/showSummary', data=get_existing_mail_2)
+        client.post('/showSummary', data=get_credentials_2)
         client.get(url_for(endpoint='book',
                            competition=get_existing_competition_and_club_2['competition'],
                            club=get_existing_competition_and_club_2['club']))
@@ -176,11 +180,11 @@ class TestApp:
 
     @staticmethod
     def test_purchasing_places_not_enough_points_returns_sorry(client,
-                                                               get_existing_mail_2,
+                                                               get_credentials_2,
                                                                get_existing_competition_and_club_2,
                                                                get_inconsistent_purchasing_data):
 
-        client.post('/showSummary', data=get_existing_mail_2)
+        client.post('/showSummary', data=get_credentials_2)
         client.get(url_for(endpoint='book',
                            competition=get_existing_competition_and_club_2['competition'],
                            club=get_existing_competition_and_club_2['club']))
@@ -197,11 +201,11 @@ class TestApp:
 
     @staticmethod
     def test_purchasing_places_over_12_places_status_code_error(client,
-                                                                get_existing_mail,
+                                                                get_credentials,
                                                                 get_existing_competition_and_club,
                                                                 purchasing_over_12_places):
 
-        client.post('/showSummary', data=get_existing_mail)
+        client.post('/showSummary', data=get_credentials)
 
         client.get(url_for(endpoint='book',
                            competition=get_existing_competition_and_club['competition'],
@@ -213,10 +217,10 @@ class TestApp:
 
     @staticmethod
     def test_purchasing_places_over_12_places_returns_sorry(client,
-                                                            get_existing_mail,
+                                                            get_credentials,
                                                             purchasing_over_12_places):
 
-        client.post('/showSummary', data=get_existing_mail)
+        client.post('/showSummary', data=get_credentials)
 
         purchasing_data = purchasing_over_12_places
 
@@ -236,10 +240,10 @@ class TestApp:
 
     @staticmethod
     def test_purchasing_places_over_12_cumulative_places_returns_sorry(client,
-                                                                       get_existing_mail,
+                                                                       get_credentials,
                                                                        purchasing_13_cumulative_places):
 
-        client.post('/showSummary', data=get_existing_mail)
+        client.post('/showSummary', data=get_credentials)
 
         purchasing_data = purchasing_13_cumulative_places
 
@@ -259,10 +263,10 @@ class TestApp:
 
     @staticmethod
     def test_purchasing_places_negative_number_status_code_error(client,
-                                                                 get_existing_mail,
+                                                                 get_credentials,
                                                                  purchasing_with_negative_places):
 
-        client.post('/showSummary', data=get_existing_mail)
+        client.post('/showSummary', data=get_credentials)
 
         purchasing_data = purchasing_with_negative_places
 
@@ -276,10 +280,10 @@ class TestApp:
 
     @staticmethod
     def test_purchasing_places_negative_number_returns_sorry(client,
-                                                             get_existing_mail,
+                                                             get_credentials,
                                                              purchasing_with_negative_places):
 
-        client.post('/showSummary', data=get_existing_mail)
+        client.post('/showSummary', data=get_credentials)
 
         purchasing_data = purchasing_with_negative_places
 
@@ -299,10 +303,10 @@ class TestApp:
 
     @staticmethod
     def test_purchasing_places_past_competitions_status_code_error(client,
-                                                                   get_existing_mail,
+                                                                   get_credentials,
                                                                    get_existing_competition_and_club_3):
 
-        client.post('/showSummary', data=get_existing_mail)
+        client.post('/showSummary', data=get_credentials)
 
         client_response = client.get(url_for(endpoint='book',
                                       competition=get_existing_competition_and_club_3['competition'],
@@ -312,10 +316,10 @@ class TestApp:
 
     @staticmethod
     def test_purchasing_places_past_competitions_returns_sorry(client,
-                                                               get_existing_mail,
+                                                               get_credentials,
                                                                get_existing_competition_and_club_3):
 
-        client.post('/showSummary', data=get_existing_mail)
+        client.post('/showSummary', data=get_credentials)
 
         client_response = client.get(url_for(endpoint='book',
                            competition=get_existing_competition_and_club_3['competition'],
@@ -327,10 +331,10 @@ class TestApp:
 
     @staticmethod
     def test_purchasing_places_over_available_status_code_error(client,
-                                                                get_existing_mail,
+                                                                get_credentials,
                                                                 purchasing_places_more_than_available):
 
-        client.post('/showSummary', data=get_existing_mail)
+        client.post('/showSummary', data=get_credentials)
 
         purchasing_data = purchasing_places_more_than_available
 
@@ -344,10 +348,10 @@ class TestApp:
 
     @staticmethod
     def test_purchasing_places_over_available_returns_sorry(client,
-                                                            get_existing_mail,
+                                                            get_credentials,
                                                             purchasing_places_more_than_available):
 
-        client.post('/showSummary', data=get_existing_mail)
+        client.post('/showSummary', data=get_credentials)
 
         purchasing_data = purchasing_places_more_than_available
 
@@ -367,10 +371,10 @@ class TestApp:
 
     @staticmethod
     def test_purchasing_places_sold_out_status_code_error(client,
-                                                          get_existing_mail,
+                                                          get_credentials,
                                                           get_existing_competition_and_club_4):
 
-        client.post('/showSummary', data=get_existing_mail)
+        client.post('/showSummary', data=get_credentials)
 
         client_response = client.get(url_for(endpoint='book',
                            competition=get_existing_competition_and_club_4['competition'],

@@ -1,0 +1,32 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Summary | GUDLFT Profile</title>
+</head>
+<body>
+        <h2>Welcome, {{club['email']}} </h2><a href="{{url_for('logout')}}">Logout</a>
+
+    {% with messages = get_flashed_messages()%}
+    {% if messages %}
+        <ul>
+       {% for message in messages %}
+            <li>{{message}}</li>
+        {% endfor %}
+       </ul>
+    {% endif%}
+    <h3>Profile:</h3>
+    <ul>
+        <li>Name : {{club['name']}}</li>
+        <li>Email : {{club['email']}}</li>
+        <li>password : {{club['password']}} - <a href="{{url_for('change_password', club=club['name'])}}">Change password</a></li>
+        <br>
+        <li>Points available: {{club['points']}}</li>
+    </ul>
+    <br>
+    <a href="{{url_for('show_summary', club=club['name'])}}">Go to home page</a>
+
+    {%endwith%}
+
+</body>
+</html>

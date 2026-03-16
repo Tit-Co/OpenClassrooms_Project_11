@@ -1,7 +1,7 @@
 import pytest
 
 from random import randint
-
+from werkzeug.security import generate_password_hash
 from server import app
 
 @pytest.fixture
@@ -16,15 +16,18 @@ def get_clubs():
     {
         "name":"Simply Lift",
         "email":"john@simplylift.co",
+        "password": generate_password_hash("tp1_Tmn28"),
         "points":"13"
     },
     {
         "name":"Iron Temple",
         "email": "admin@irontemple.com",
+        "password": generate_password_hash("tp2_Tmn29"),
         "points":"4"
     },
     {   "name":"She Lifts",
         "email": "kate@shelifts.co.uk",
+        "password": generate_password_hash("tp3_Tmn30"),
         "points":"12",
         "booked_places": {
                             "Spring Festival": "7"
@@ -33,6 +36,7 @@ def get_clubs():
     {
         "name": "Power Lift",
         "email": "admin@powerlift.com",
+        "password": generate_password_hash("tp4_Tmn40"),
         "points": "5"
     }
     ]
@@ -65,18 +69,18 @@ def get_competitions():
     return the_competitions
 
 @pytest.fixture
-def get_existing_mail():
-    data = {"email": "kate@shelifts.co.uk"}
+def get_credentials():
+    data = {"email": "kate@shelifts.co.uk", "password": "tp3_Tmn30"}
     return data
 
 @pytest.fixture
-def get_existing_mail_2():
-    data = {"email": "admin@irontemple.com"}
+def get_credentials_2():
+    data = {"email": "admin@irontemple.com", "password": "tp2_Tmn29"}
     return data
 
 @pytest.fixture
-def get_unexisting_mail():
-    data = {"email": "nicolas.marie@unexisting.com"}
+def get_unexisting_credentials():
+    data = {"email": "nicolas.marie@unexisting.com", "password": "er45_shet"}
     return data
 
 @pytest.fixture

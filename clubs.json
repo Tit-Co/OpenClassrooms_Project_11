@@ -3,22 +3,26 @@
         {
             "name": "Simply Lift",
             "email": "john@simplylift.co",
+            "password": "pbkdf2:sha256:150000$eHVGmFVY$00afed3d5a39621cc5aad05d069b8d8643c9e3e47435471f40861e608e825711",
             "points": "13"
-        },
-        {
-            "name": "Iron Temple",
-            "email": "admin@irontemple.com",
-            "points": "4"
         },
         {
             "name": "Power Lift",
             "email": "admin@powerlift.com",
+            "password": "pbkdf2:sha256:150000$YEgAXbf8$09b68fdd4ab198aaf541a4b3a3b680449fff602e43bbfb1e602e970e9acf7b4c",
             "points": "5"
         },
         {
             "name": "She Lifts",
             "email": "kate@shelifts.co.uk",
+            "password": "pbkdf2:sha256:150000$g7r5qSMn$fecca97e2fcca7b093a4ca60789c4ebc0b6f4c0331aaaeee1ffa9f03a3404ad5",
             "points": "12"
+        },
+        {
+            "name": "Iron Temple",
+            "email": "admin@irontemple.com",
+            "password": "pbkdf2:sha256:150000$G0hKG0dK$434a98095c828d2735c63724fe9ae142a88d4aaba9489733c7fd614db655237a",
+            "points": "4"
         }
     ]
 }
