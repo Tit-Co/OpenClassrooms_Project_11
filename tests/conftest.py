@@ -113,6 +113,16 @@ def get_consistent_purchasing_data():
     return data
 
 @pytest.fixture
+def get_new_club():
+    club = {
+        "name": "New Club",
+        "email": "new@newclub.com",
+        "password": generate_password_hash("tp6_Tmn60"),
+        "points": "12"
+    }
+    return club
+
+@pytest.fixture
 def get_inconsistent_purchasing_data():
     competition = "Spring Festival"
     club_name = "Iron Temple"

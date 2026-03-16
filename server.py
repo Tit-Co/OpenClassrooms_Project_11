@@ -10,7 +10,6 @@ def load_clubs():
          list_of_clubs = json.load(c)['clubs']
          return list_of_clubs
 
-
 def load_competitions():
     with open('competitions.json') as comps:
          list_of_competitions = json.load(comps)['competitions']
@@ -59,7 +58,8 @@ def add_club(name, email, password, points):
     save_clubs()
 
 def update_club_password(club, password):
-    club["password"] = password
+    hashed_password = generate_password_hash(password)
+    club["password"] = hashed_password
     save_clubs()
     return club
 
@@ -129,13 +129,12 @@ def change_password(club):
             return redirect(url_for('change_password'))
 
         the_club = next((c for c in clubs if c['name'] == club), None)
-        hashed_password = generate_password_hash(club_password)
 
         if check_password_hash(the_club['password'], club_password):
             flash('Sorry, you have to type a new different password.')
             return render_template(template_name_or_list='change_password.html', club=the_club)
 
-        the_club = update_club_password(the_club, hashed_password)
+        the_club = update_club_password(the_club, club_password)
 
         if the_club:
             flash("Great! You have successfully changed your password.")
