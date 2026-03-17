@@ -229,7 +229,7 @@ def book(competition, club):
     flash("Sorry, you are not allow to do this action.")
     return render_template(template_name_or_list='index.html', error="Not allow"), 403
 
-@app.route('/purchasePlaces',methods=['POST'])
+@app.route('/purchasePlaces', methods=['POST'])
 def purchase_places():
     competition = [c for c in competitions if c['name'] == request.form['competition']][0]
     club = [c for c in clubs if c['name'] == request.form['club']][0]
@@ -285,7 +285,7 @@ def points_board():
         else:
             club["color"] = "#aaaaaa"
         clubs_for_board.append(club)
-    print(clubs_for_board)
+
     return render_template(template_name_or_list='points_board.html', clubs=clubs_for_board)
 
 @app.route('/logout')

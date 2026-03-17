@@ -230,8 +230,6 @@ class TestIntegrationApp:
                                                           get_existing_competition_and_club_4):
 
         client.post('/showSummary', data=get_credentials_3)
-        print(get_credentials_3)
-        print(get_existing_competition_and_club_4)
 
         client_response = client.get(url_for(endpoint='book',
                            competition=get_existing_competition_and_club_4['competition'],

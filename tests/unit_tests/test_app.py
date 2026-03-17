@@ -180,3 +180,11 @@ class TestUnitApp:
         server.update_competition_available_places(competition=competition, places=5)
 
         assert not competition['number_of_places'] == str(places_available - 4)
+
+    @staticmethod
+    def test_points_board_status_code_ok(client):
+        client_response = client.get('/pointsBoard')
+        data = client_response.data.decode('utf-8')
+        assert client_response.status_code == 200
+        assert "Welcome to the GUDLFT clubs points board!" in data
+        assert "⯈ Here is the board for all the clubs and their points." in data
