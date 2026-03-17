@@ -1,3 +1,4 @@
+import os
 import json
 
 from datetime import datetime
@@ -5,13 +6,17 @@ from flask import Flask, render_template, request, redirect, flash, url_for, ses
 from werkzeug.security import generate_password_hash, check_password_hash
 
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 def load_clubs():
-    with open('clubs.json') as c:
+    path = os.path.join(BASE_DIR, 'clubs.json')
+    with open(path) as c:
          list_of_clubs = json.load(c)['clubs']
          return list_of_clubs
 
 def load_competitions():
-    with open('competitions.json') as comps:
+    path = os.path.join(BASE_DIR, 'competitions.json')
+    with open(path) as comps:
          list_of_competitions = json.load(comps)['competitions']
          return list_of_competitions
 

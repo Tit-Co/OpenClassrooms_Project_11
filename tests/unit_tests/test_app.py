@@ -1,7 +1,7 @@
 import pytest
 import server
 
-from werkzeug.security import check_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash
 from flask import url_for
 
 
@@ -11,6 +11,7 @@ class TestUnitApp:
         mocker.patch('server.clubs', get_clubs)
         mocker.patch('server.competitions', get_competitions)
         mocker.patch('server.save_clubs')
+        mocker.patch('server.save_competitions')
 
     @staticmethod
     def test_index_status_code_ok(client):
@@ -27,6 +28,12 @@ class TestUnitApp:
                 'or <a href="/signUp">sign up</a>') in data
         assert "Email:" in data
         assert "Password:" in data
+
+    @staticmethod
+    def test_index_without_authentication_fails(client, get_credentials):
+        club = next((c for c in server.clubs if c['email'] == get_credentials["email"]), None)
+        client_response = client.get(f'/showSummary/{club["name"]}')
+        assert client_response.status_code == 403
 
     @staticmethod
     def test_index_mail_authentication_ok(get_credentials, client):
