@@ -2,27 +2,30 @@
     "clubs": [
         {
             "name": "Simply Lift",
-            "email": "john@simplylift.co.uk",
-            "password": "pbkdf2:sha256:150000$hRdMG3j8$75089df7d666a0a804b2ab30832ee5ead0af0f9da1a16792aebb227f26736140",
+            "email": "john@simplylift.co",
+            "password": "scrypt:32768:8:1$X6KRAmtt7186JPOV$d313adfa98285ed86e8b7cdb57b94e418c3cd4101aa3f268bdcbfd88e123ddb55f4c6d1383af023145d9f59bcaffcd600bbdee89e2612b0db22f8da3ac7e40c3",
             "points": "13"
         },
         {
             "name": "Iron Temple",
             "email": "admin@irontemple.com",
-            "password": "pbkdf2:sha256:150000$vRos0Pry$191eef653bbe787936e8329844c04c082ea74f91ed2da129ed0258a9cf4f0b62",
+            "password": "scrypt:32768:8:1$VmxOKXbIbWLNVJZ5$675e4bdbcd5592350046a8139e272d09c2c9a5574a76c99e6c1e6b848ed3a170c0a3fb0e18ece7ecc7d7aa8aaaa3ff8bbdc72b40cc1f92b6dee8aac76d38a822",
             "points": "4"
-        },
-        {
-            "name": "Power Lift",
-            "email": "admin@powerlift.com",
-            "password": "pbkdf2:sha256:150000$NSg2p4vF$e817bb5a870bf4fea7e0687a9afe4b620a6ba2402d6190450d13407b00e39848",
-            "points": "5"
         },
         {
             "name": "She Lifts",
             "email": "kate@shelifts.co.uk",
-            "password": "pbkdf2:sha256:150000$8LvMXlh1$84c53ce7ad7b0adb694806647bc1fd7f2c748b5e3a41d5ad76f515c148e86252",
-            "points": "12"
+            "password": "scrypt:32768:8:1$WRC7E8hIdEXhR9bW$282910e3a7c98efd93d190c1f43b8618f334dd7332865228900ad6dde7c2487474f2a98af1247d49bbfc42a7ad92c0e69201766d403eb49eba8fc03b0d4864da",
+            "points": "12",
+            "booked_places": {
+                "Spring Festival": "7"
+            }
+        },
+        {
+            "name": "Power Lift",
+            "email": "admin@powerlift.com",
+            "password": "scrypt:32768:8:1$rEXX0x145nTwcwXq$7957313e13d4ca8f1b4be275af850b0c46b40225864d866cba6be6dc169dca139d34574048fa0f34fed40055672858e33c7e6b364772ce98daac750402874ae8",
+            "points": "5"
         }
     ]
 }

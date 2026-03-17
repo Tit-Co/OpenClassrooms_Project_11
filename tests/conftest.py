@@ -1,4 +1,6 @@
+import threading
 import pytest
+import time
 
 from random import randint
 from werkzeug.security import generate_password_hash
@@ -172,3 +174,21 @@ def purchasing_places_more_than_available():
     data = {"competition": competition, "club": club_name, "places": str(places_to_book)}
 
     return data
+
+@pytest.fixture(scope="module")
+def live_server():
+    app.config["TESTING"] = True
+
+    ctx = app.app_context()
+    ctx.push()
+
+    server_thread = threading.Thread(
+        target=app.run,
+        kwargs={"port": 5000, "use_reloader": False},
+        daemon=True
+    )
+    server_thread.start()
+    time.sleep(1)
+
+    yield "http://127.0.0.1:5000"
+    ctx.pop()

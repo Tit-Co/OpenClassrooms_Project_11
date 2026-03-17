@@ -2,7 +2,7 @@ import pytest
 import server
 
 from werkzeug.security import check_password_hash
-from flask import url_for, session
+from flask import url_for
 
 
 class TestUnitApp:
