@@ -1,31 +1,32 @@
 {
     "clubs": [
         {
-            "name": "Power Lift",
-            "email": "admin@powerlift.com",
-            "password": "scrypt:32768:8:1$rEXX0x145nTwcwXq$7957313e13d4ca8f1b4be275af850b0c46b40225864d866cba6be6dc169dca139d34574048fa0f34fed40055672858e33c7e6b364772ce98daac750402874ae8",
-            "points": "5"
+            "name": "Simply Lift",
+            "email": "john@simplylift.co",
+            "password": "scrypt:32768:8:1$cYYbKbko75gPN3N3$4883a2360abf24fcc9f8329aedfca168994222748933eff4d89c78e5764f0972fce4c478b5737ece1bd31a3d2a0f1a00586096ffbddb79809b9685eabc5e5f4e",
+            "points": "13",
+            "color": "#cccccc"
         },
         {
             "name": "Iron Temple",
             "email": "admin@irontemple.com",
-            "password": "scrypt:32768:8:1$VmxOKXbIbWLNVJZ5$675e4bdbcd5592350046a8139e272d09c2c9a5574a76c99e6c1e6b848ed3a170c0a3fb0e18ece7ecc7d7aa8aaaa3ff8bbdc72b40cc1f92b6dee8aac76d38a822",
-            "points": "4"
+            "password": "scrypt:32768:8:1$l1LZOHJgJvGdtCKk$72f98c3abd1dc854000bca6e0a6b8c1289f5d4682f6086c6e118add74d5ada6935a4de8d4d7121791eac34f9036a65f07bae8cde93e9bc6bef5bbbcb50983697",
+            "points": "4",
+            "color": "#aaaaaa"
+        },
+        {
+            "name": "Power Lift",
+            "email": "admin@powerlift.com",
+            "password": "scrypt:32768:8:1$c0ePLkJjwFO0xhpP$a9c637393de25e3f6b121ab38d3d9c3589d66879618157ea3382ae9ee2310c28265be341d4af02c4c1d1f81427ccdbc96464b0bb19697a819f5ad987764c17ad",
+            "points": "5",
+            "color": "#cccccc"
         },
         {
             "name": "She Lifts",
             "email": "kate@shelifts.co.uk",
-            "password": "scrypt:32768:8:1$WRC7E8hIdEXhR9bW$282910e3a7c98efd93d190c1f43b8618f334dd7332865228900ad6dde7c2487474f2a98af1247d49bbfc42a7ad92c0e69201766d403eb49eba8fc03b0d4864da",
+            "password": "scrypt:32768:8:1$E4fcXT3MQ7oVfc0w$cf31c4a6aec02d4532ffcae03670b12f20265036a3ae5ee941fae6d135ca2db5e406fe9e6c6eded7776e0c256f6d8970f2cbfb74ee50a1c7f9b49b1ad6819b40",
             "points": "12",
-            "booked_places": {
-                "Spring Festival": "7"
-            }
-        },
-        {
-            "name": "Simply Lift",
-            "email": "john@simplylift.co",
-            "password": "scrypt:32768:8:1$X6KRAmtt7186JPOV$d313adfa98285ed86e8b7cdb57b94e418c3cd4101aa3f268bdcbfd88e123ddb55f4c6d1383af023145d9f59bcaffcd600bbdee89e2612b0db22f8da3ac7e40c3",
-            "points": "13"
+            "color": "#aaaaaa"
         }
     ]
 }

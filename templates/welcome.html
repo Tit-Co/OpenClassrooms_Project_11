@@ -1,39 +1,36 @@
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Summary | GUDLFT Registration</title>
-</head>
-<body>
-        <h2>Welcome, {{club['email']}} </h2><a href="{{url_for('logout')}}">Logout</a><br><br>
+{% extends 'base.html' %}
+{% block content %}
+{% with messages = get_flashed_messages()%}
+     <div class="message">
+        {% with messages = get_flashed_messages()%}
+            {% if messages %}
+                <ul>
+               {% for message in messages %}
+                    ❌&nbsp;<li>{{message}}</li>
+                {% endfor %}
+               </ul>
+            {% endif%}
+        {%endwith%}
+    </div>
+<h2>Welcome, {{club['email']}} </h2>
 
-    {% with messages = get_flashed_messages()%}
-    {% if messages %}
-        <ul>
-       {% for message in messages %}
-            <li>{{message}}</li>
-        {% endfor %}
-       </ul>
-    {% endif%}
-
+    <a href="{{url_for('logout')}}">Log out</a><br><br>
     <a href="{{ url_for('profile', club=club['name']) }}">Go to profile</a>
-    <br>
+    <br><br>
     Points available: {{club['points']}}
-    <h3>Competitions:</h3>
+    <h3>- Competitions -</h3>
     <ul>
         {% for comp in competitions%}
-        <li>
-            {{comp['name']}}<br />
+        <li class="competition">
+            <b>{{comp['name']}}</b><br />
             Date: {{comp['date']}}</br>
-            Number of Places: {{comp['number_of_places']}}
+            Number of Places: {{comp['number_of_places']}}<br><br>
             {%if comp['number_of_places']|int >0%}
-            <a href="{{ url_for('book',competition=comp['name'],club=club['name']) }}">Book Places</a>
+                <a class="book" href="{{ url_for('book',competition=comp['name'],club=club['name']) }}">Book Places</a>
             {%endif%}
         </li>
-        <hr />
         {% endfor %}
     </ul>
     {%endwith%}
 
-</body>
-</html>
+{% endblock %}

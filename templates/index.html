@@ -1,23 +1,20 @@
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GUDLFT Registration</title>
-</head>
-<body>
-    <h1>Welcome to the GUDLFT Registration Portal!</h1>
+{% extends 'base.html' %}
+{% block content %}
+     <div class="message">
+        {% with messages = get_flashed_messages()%}
+            {% if messages %}
+                <ul>
+               {% for message in messages %}
+                    ❌&nbsp;<li>{{message}}</li>
+                {% endfor %}
+               </ul>
+            {% endif%}
+        {%endwith%}
+    </div>
 
-    {% with messages = get_flashed_messages()%}
-        {% if messages %}
-            <ul>
-           {% for message in messages %}
-                <li>{{message}}</li>
-            {% endfor %}
-           </ul>
-        {% endif%}
-    {%endwith%}
+    <h2>Log in</h2>
 
-    Please enter your secretary email and your password to continue or <a href="{{url_for('sign_up')}}">sign up</a>
+    ⯈ Please enter your secretary email and your password to continue or <a href="{{url_for('sign_up')}}">sign up</a>
     <br>
     <br>
     <form action="showSummary" method="post">
@@ -26,11 +23,8 @@
 
         <label for="password">Password:</label>
         <input type="password" name="password" id="password"/>
-
+        <br><br>
         <button type="submit" id="login">Enter</button>
     </form>
     <br>
-    <hr>
-    To see the clubs points board : <a href="{{url_for('points_board')}}">click here</a>
-</body>
-</html>
+{% endblock %}

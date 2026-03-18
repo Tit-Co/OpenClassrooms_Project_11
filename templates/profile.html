@@ -1,32 +1,30 @@
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Summary | GUDLFT Profile</title>
-</head>
-<body>
-        <h2>Welcome, {{club['email']}} </h2> - <a href="{{url_for('logout')}}">Logout</a>
+{% extends 'base.html' %}
+{% block content %}
+     <div class="message">
+        {% with messages = get_flashed_messages()%}
+            {% if messages %}
+                <ul>
+               {% for message in messages %}
+                    ❌&nbsp;<li>{{message}}</li>
+                {% endfor %}
+               </ul>
+            {% endif%}
+        {%endwith%}
+    </div>
 
-    {% with messages = get_flashed_messages()%}
-    {% if messages %}
-        <ul>
-       {% for message in messages %}
-            <li>{{message}}</li>
-        {% endfor %}
-       </ul>
-    {% endif%}
-    <h3>Profile:</h3>
-    <ul>
+    <h2>Welcome, {{club['email']}} </h2>
+    <h3>- Profile -</h3>
+    <ul class="profile">
         <li>Name : {{club['name']}}</li>
         <li>Email : {{club['email']}}</li>
-        <li>password : {{club['password']}} - <a href="{{url_for('change_password', club=club['name'])}}">Change password</a></li>
         <br>
+        <a href="{{url_for('change_password', club=club['name'])}}">Change password</a></li>
+        <br><br>
         <li>Points available: {{club['points']}}</li>
     </ul>
     <br>
-    <a href="{{url_for('show_summary', club=club['name'])}}">Go to home page</a>
+    <a href="{{url_for('index')}}">Go to home page</a>
 
     {%endwith%}
 
-</body>
-</html>
+{% endblock %}

@@ -1,0 +1,25 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GUDLFT Registration</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <main>
+        <div class="main_content">
+            <h1>Welcome to the GUDLFT Portal!</h1>
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+    <div class="separator"></div>
+    <div class="points_board">
+        <a href="{{url_for('points_board')}}">CLUBS POINTS BOARD</a>
+    </div>
+
+    <footer class="footer">
+        <h5>© 2026 - Nicolas MARIE - <a href="{{url_for('index')}}">GUDLFT</a></h5>&nbsp;-&nbsp;
+        <h6><a href="{{url_for('logout')}}">LOG OUT</a></h6>
+    </footer>
+</body>
+</html>
