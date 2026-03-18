@@ -5,14 +5,18 @@
             {% if messages %}
                 <ul>
                {% for message in messages %}
-                    ❌&nbsp;<li>{{message}}</li>
+                    {% if "Sorry" in message %}
+                        <li style="color: darkred;">❌&nbsp;{{message}}</li>
+                   {% else %}
+                        <li style="color: darkgreen;">✅&nbsp;{{message}}</li>
+                   {% endif %}
                 {% endfor %}
                </ul>
             {% endif%}
         {%endwith%}
     </div>
 
-    <h2>Log in</h2>
+    <h2>Authentication</h2>
 
     ⯈ Please enter your secretary email and your password to continue or <a href="{{url_for('sign_up')}}">sign up</a>
     <br>

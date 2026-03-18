@@ -1,36 +1,37 @@
 {% extends 'base.html' %}
 {% block content %}
-{% with messages = get_flashed_messages()%}
-     <div class="message">
-        {% with messages = get_flashed_messages()%}
-            {% if messages %}
-                <ul>
-               {% for message in messages %}
-                    ❌&nbsp;<li>{{message}}</li>
+
+<div class="message">
+    {% with messages = get_flashed_messages()%}
+        {% if messages %}
+            <ul>
+                {% for message in messages %}
+                   {% if "Sorry" in message %}
+                        <li style="color: darkred;">❌&nbsp;{{message}}</li>
+                   {% else %}
+                        <li style="color: darkgreen;">✅&nbsp;{{message}}</li>
+                   {% endif %}
                 {% endfor %}
                </ul>
             {% endif%}
         {%endwith%}
-    </div>
-<h2>Welcome, {{club['email']}} </h2>
+        </div>
+        <h2>Welcome, {{club['email']}} </h2>
 
-    <a href="{{url_for('logout')}}">Log out</a><br><br>
-    <a href="{{ url_for('profile', club=club['name']) }}">Go to profile</a>
-    <br><br>
-    Points available: {{club['points']}}
-    <h3>- Competitions -</h3>
-    <ul>
-        {% for comp in competitions%}
-        <li class="competition">
-            <b>{{comp['name']}}</b><br />
-            Date: {{comp['date']}}</br>
-            Number of Places: {{comp['number_of_places']}}<br><br>
-            {%if comp['number_of_places']|int >0%}
-                <a class="book" href="{{ url_for('book',competition=comp['name'],club=club['name']) }}">Book Places</a>
-            {%endif%}
-        </li>
-        {% endfor %}
-    </ul>
-    {%endwith%}
-
+        <a href="{{ url_for('profile', club=club['name']) }}">Go to profile</a>
+        <br><br>
+        Points available: {{club['points']}}
+        <h3>- Competitions -</h3>
+        <ul>
+            {% for comp in competitions%}
+            <li class="competition">
+                <b>{{comp['name']}}</b><br />
+                Date: {{comp['date']}}</br>
+                Number of Places: {{comp['number_of_places']}}<br><br>
+                {%if comp['number_of_places']|int >0%}
+                    <a class="book" href="{{ url_for('book',competition=comp['name'],club=club['name']) }}">Book Places</a>
+                {%endif%}
+            </li>
+            {% endfor %}
+        </ul>
 {% endblock %}

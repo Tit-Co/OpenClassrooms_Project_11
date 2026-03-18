@@ -5,7 +5,11 @@
             {% if messages %}
                 <ul>
                {% for message in messages %}
-                    ❌&nbsp;<li>{{message}}</li>
+                   {% if "Sorry" in message %}
+                        <li style="color: darkred;">❌&nbsp;{{message}}</li>
+                   {% else %}
+                        <li style="color: darkgreen;">✅&nbsp;{{message}}</li>
+                   {% endif %}
                 {% endfor %}
                </ul>
             {% endif%}
@@ -17,14 +21,10 @@
     <ul class="profile">
         <li>Name : {{club['name']}}</li>
         <li>Email : {{club['email']}}</li>
-        <br>
-        <a href="{{url_for('change_password', club=club['name'])}}">Change password</a></li>
-        <br><br>
+        <li><a href="{{url_for('change_password', club=club['name'])}}">Change password</a></li>
         <li>Points available: {{club['points']}}</li>
     </ul>
     <br>
-    <a href="{{url_for('index')}}">Go to home page</a>
-
-    {%endwith%}
+    <a href="{{url_for('show_summary', club=club['name'])}}">Go to summary</a>
 
 {% endblock %}

@@ -5,13 +5,17 @@
             {% if messages %}
                 <ul>
                {% for message in messages %}
-                    ❌&nbsp;<li>{{message}}</li>
+                    {% if "Sorry" in message %}
+                        <li style="color: darkred;">❌&nbsp;{{message}}</li>
+                   {% else %}
+                        <li style="color: darkgreen;">✅&nbsp;{{message}}</li>
+                   {% endif %}
                 {% endfor %}
                </ul>
             {% endif%}
         {%endwith%}
     </div>
-    <h2>Registration page</h2>
+    <h2>Registration</h2>
 
     ⯈ Please enter your details
     <br><br>
@@ -29,4 +33,5 @@
         <br><br>
         <button type="submit" id="signup">Create club profile</button>
     </form>
+    <a class="book" href="{{ url_for("index") }}">Go back</a>
 {% endblock %}l>

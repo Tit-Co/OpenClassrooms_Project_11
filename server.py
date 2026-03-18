@@ -1,5 +1,6 @@
 import os
 import json
+import re
 
 from datetime import datetime
 from flask import Flask, render_template, request, redirect, flash, url_for, session
@@ -68,6 +69,11 @@ def update_club_password(club, password):
     save_clubs()
     return club
 
+def check_all_fields_filled_out(name, email, password, password2):
+    if len(name) == 0 or len(email) == 0 or len(password) == 0 or len(password2) == 0:
+        return False
+    return True
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -96,6 +102,17 @@ def profile_post():
     club_email = request.form['email']
     club_password = request.form['password']
     club_password_confirmation = request.form['confirm_password']
+
+    error_message = ""
+    if not check_all_fields_filled_out(club_name, club_email, club_password, club_password):
+        error_message = "Sorry, please fill all fields"
+
+    elif not re.match(r'\b[A-Za-z0-9._+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b', club_email):
+        error_message = "Sorry, the e-mail address you entered has invalid format."
+
+    if error_message:
+        flash(error_message)
+        return redirect(url_for('sign_up'))
 
     club_exists = next((c for c in clubs if c['email'] == club_email or c['name'] == club_name), None)
     if club_exists is None:
@@ -134,9 +151,16 @@ def change_password(club):
             club_password = request.form['password']
             club_password_confirmation = request.form['confirm_password']
 
-            if club_password != club_password_confirmation:
-                flash('Sorry, passwords do not match')
-                return redirect(url_for('change_password'))
+            error_message = ""
+            if len(club_password) == 0 or len(club_password_confirmation) == 0:
+                error_message = "Sorry, please fill all fields"
+
+            elif club_password != club_password_confirmation:
+                error_message = "Sorry, passwords do not match"
+
+            if error_message:
+                flash(error_message)
+                return redirect(url_for('change_password', club=club))
 
             the_club = next((c for c in clubs if c['name'] == club), None)
 
@@ -182,6 +206,7 @@ def show_summary_post():
 
     session["club"] = the_club["name"]
 
+    flash("Great! You are successfully logged in.")
     return render_template(template_name_or_list='welcome.html',
                            club=the_club,
                            competitions=competitions)
@@ -295,4 +320,5 @@ def points_board():
 
 @app.route('/logout')
 def logout():
+    flash("Great! You are successfully logged out.")
     return redirect(url_for('index'))
