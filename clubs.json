@@ -8,13 +8,6 @@
             "color": "#cccccc"
         },
         {
-            "name": "Iron Temple",
-            "email": "admin@irontemple.com",
-            "password": "scrypt:32768:8:1$rHMWqkkiOSz7QiYU$e1a798fc6d464425359fb999db786ffbe39f6059e195d6d22a15e3ed70be3b5630e1d828399ca241f9d94e109ee5b350067f14a8054079344f01495c73594021",
-            "points": "4",
-            "color": "#aaaaaa"
-        },
-        {
             "name": "Power Lift",
             "email": "admin@powerlift.com",
             "password": "scrypt:32768:8:1$c0ePLkJjwFO0xhpP$a9c637393de25e3f6b121ab38d3d9c3589d66879618157ea3382ae9ee2310c28265be341d4af02c4c1d1f81427ccdbc96464b0bb19697a819f5ad987764c17ad",
@@ -26,6 +19,13 @@
             "email": "kate@shelifts.co.uk",
             "password": "scrypt:32768:8:1$E4fcXT3MQ7oVfc0w$cf31c4a6aec02d4532ffcae03670b12f20265036a3ae5ee941fae6d135ca2db5e406fe9e6c6eded7776e0c256f6d8970f2cbfb74ee50a1c7f9b49b1ad6819b40",
             "points": "12",
+            "color": "#aaaaaa"
+        },
+        {
+            "name": "Iron Temple",
+            "email": "admin@irontemple.com",
+            "password": "scrypt:32768:8:1$rHMWqkkiOSz7QiYU$e1a798fc6d464425359fb999db786ffbe39f6059e195d6d22a15e3ed70be3b5630e1d828399ca241f9d94e109ee5b350067f14a8054079344f01495c73594021",
+            "points": "4",
             "color": "#aaaaaa"
         }
     ]

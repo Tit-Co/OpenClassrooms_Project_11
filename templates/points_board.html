@@ -18,6 +18,11 @@
         </table>
     </div>
     <br>
-    To continue into the application, please <a href="{{url_for('index')}}">log in</a>
+    To continue into the application,
+    {% if club %}
+        go to <a href="{{url_for('show_summary', club=club)}}">summary</a>
+    {% else %}
+        please <a href="{{url_for('index')}}">log in</a>
+    {% endif %}
     <br>
 {% endblock %}

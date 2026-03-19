@@ -4,6 +4,8 @@ import server
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask import url_for
 
+from server import check_all_fields_filled_out
+
 
 class TestUnitApp:
     @pytest.fixture(autouse=True)
@@ -23,7 +25,7 @@ class TestUnitApp:
         client_response = client.get('/')
         data = client_response.data.decode('utf-8')
 
-        assert "Welcome to the GUDLFT Registration Portal!" in data
+        assert "Welcome to the GUDLFT Portal!" in data
         assert ('Please enter your secretary email and your password to continue '
                 'or <a href="/signUp">sign up</a>') in data
         assert "Email:" in data
@@ -85,7 +87,8 @@ class TestUnitApp:
     def test_signup_returns_welcome(client):
         client_response = client.get('/signUp')
         data = client_response.data.decode('utf-8')
-        assert "Welcome to the GUDLFT sign up page!" in data
+        assert "Welcome to the GUDLFT Portal!" in data
+        assert "Registration" in data
         assert ("Club name:" in data)
         assert ("Email:" in data)
         assert ("Password:" in data)
@@ -143,7 +146,7 @@ class TestUnitApp:
         client_response = client.get('/profile/She Lifts')
         data = client_response.data.decode('utf-8')
         assert "Welcome, kate@shelifts.co.uk" in data
-        assert "Profile:" in data
+        assert "Profile" in data
         assert "Name : She Lifts" in data
         assert "Email : kate@shelifts.co.uk" in data
         assert "Points available: 12" in data
@@ -193,5 +196,33 @@ class TestUnitApp:
         client_response = client.get('/pointsBoard')
         data = client_response.data.decode('utf-8')
         assert client_response.status_code == 200
-        assert "Welcome to the GUDLFT clubs points board!" in data
+        assert "Welcome to the GUDLFT Portal!" in data
         assert "⯈ Here is the board for all the clubs and their points." in data
+
+    @staticmethod
+    def test_form_filled_out_ok(get_details):
+        name = get_details['name']
+        email = get_details['email']
+        password = get_details['password']
+        password2 = get_details['password2']
+
+        response = check_all_fields_filled_out(name=name,
+                                               email=email,
+                                               password=password,
+                                               password2=password2)
+
+        assert response
+
+    @staticmethod
+    def test_form_filled_out_fails(get_wrong_details):
+        name = get_wrong_details['name']
+        email = get_wrong_details['email']
+        password = get_wrong_details['password']
+        password2 = get_wrong_details['password2']
+
+        response = check_all_fields_filled_out(name=name,
+                                               email=email,
+                                               password=password,
+                                               password2=password2)
+
+        assert not response

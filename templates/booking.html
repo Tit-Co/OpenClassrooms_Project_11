@@ -8,7 +8,8 @@
         <input type="hidden" name="competition" value="{{competition['name']}}">
         <label for="places">How many places?</label>&nbsp;&nbsp;<input type="number" name="places" id=""/>
         <br><br>
-        <button type="submit">Book</button>
+        <button type="submit">Book places</button>
     </form>
+    <a class="book" href="{{ url_for("show_summary", club=club['name']) }}">Go back</a>
 
 {% endblock %}

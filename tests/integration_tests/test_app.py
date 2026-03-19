@@ -6,7 +6,7 @@ from flask import url_for
 
 
 class TestIntegrationApp:
-    @pytest.fixture(autouse=True)
+    @pytest.fixture(autouse=True, scope='function')
     def setup(self, mocker, get_clubs, get_competitions):
         mocker.patch('server.clubs', get_clubs)
         mocker.patch('server.competitions', get_competitions)
@@ -26,7 +26,8 @@ class TestIntegrationApp:
         assert redirect_response.status_code == 200
         data = redirect_response.data.decode('utf-8')
 
-        assert "Welcome to the GUDLFT Registration Portal!" in data
+        assert "Welcome to the GUDLFT Portal!" in data
+        assert "Authentication" in data
         assert ('Please enter your secretary email and your password to continue '
                 'or <a href="/signUp">sign up</a>') in data
         assert "Email:" in data
@@ -76,13 +77,11 @@ class TestIntegrationApp:
         all_li_str = [str(li) for li in soup.find_all('li')]
         the_club_name_utf8 = "%20".join(the_club['name'].split())
         the_competition_name_utf8 = "%20".join(the_competition['name'].split())
-        li = (f'<li>\n'
-              f'            {the_competition["name"]}<br/>\n'
-              f'            Date: 2026-07-27 10:00:00\n'
-              f'            Number of Places: {new_competition_places}\n            \n'
-              f'            <a href="/book/{the_competition_name_utf8}/'
-              f'{the_club_name_utf8}">Book Places</a>\n'
-              f'</li>')
+        li = (f'<li class="competition">\n<b>{the_competition["name"]}</b><br>\n'
+              f'                Date: 2026-07-27 10:00:00\n                '
+              f'Number of Places: {new_competition_places}<br/><br/>\n'
+              f'<a class="book" href="/book/{the_competition_name_utf8}/'
+              f'{the_club_name_utf8}">Book Places</a>\n</br></li>')
 
         assert client_response.status_code == 200
         assert (f"Great! Booking of {purchasing_data['places']} places for "
@@ -239,3 +238,43 @@ class TestIntegrationApp:
 
         assert client_response.status_code == 403
         assert "Sorry, this competition is sold out. Booking not possible." in data
+
+    @staticmethod
+    def test_change_password_status_code_ok(client,
+                                            get_credentials_3,
+                                            get_existing_competition_and_club_4):
+
+        client.post('/showSummary', data=get_credentials_3)
+
+        passwords = {
+            "password": "tr_nl_er4",
+            "confirm_password": "tr_nl_er4",
+        }
+
+        client_response = client.post(f'/changePassword/{get_existing_competition_and_club_4["club"]}',
+                                      data=passwords)
+
+        data = client_response.data.decode('utf-8')
+
+        assert client_response.status_code == 200
+        assert "Great! You have successfully changed your password." in data
+
+    @staticmethod
+    def test_change_password_match_fails(client,
+                                   get_credentials_3,
+                                   get_existing_competition_and_club_4):
+
+        client.post('/showSummary', data=get_credentials_3)
+
+        passwords = {
+            "password": "tr_Pl_er4",
+            "confirm_password": "tr_nl_er4",
+        }
+
+        client_response = client.post(f'/changePassword/{get_existing_competition_and_club_4["club"]}',
+                                      data=passwords)
+
+        data = client_response.data.decode('utf-8')
+
+        assert client_response.status_code == 406
+        assert "Sorry, passwords do not match." in data

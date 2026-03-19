@@ -153,20 +153,20 @@ def change_password(club):
 
             error_message = ""
             if len(club_password) == 0 or len(club_password_confirmation) == 0:
-                error_message = "Sorry, please fill all fields"
+                error_message = "Sorry, please fill all fields."
 
             elif club_password != club_password_confirmation:
-                error_message = "Sorry, passwords do not match"
+                error_message = "Sorry, passwords do not match."
 
             if error_message:
                 flash(error_message)
-                return redirect(url_for('change_password', club=club))
+                return render_template(template_name_or_list='change_password.html', club=club), 406
 
             the_club = next((c for c in clubs if c['name'] == club), None)
 
             if check_password_hash(the_club['password'], club_password):
                 flash('Sorry, you have to type a new different password.')
-                return render_template(template_name_or_list='change_password.html', club=the_club)
+                return render_template(template_name_or_list='change_password.html', club=the_club), 406
 
             the_club = update_club_password(the_club, club_password)
 
@@ -263,7 +263,8 @@ def book(competition, club):
 def purchase_places():
     competition = [c for c in competitions if c['name'] == request.form['competition']][0]
     club = [c for c in clubs if c['name'] == request.form['club']][0]
-    places_required = int(request.form['places'])
+
+    places_required = int(request.form['places']) if request.form['places'] else 0
 
     cumulative_places = places_required + int(club["booked_places"][competition["name"]]) \
         if "booked_places" in club else places_required
@@ -271,7 +272,7 @@ def purchase_places():
     error_message = ""
     error_tag = ""
 
-    if places_required < 0:
+    if places_required <= 0:
         error_message = "Sorry, you should type a positive number."
         error_tag = "Negative number"
 
@@ -300,7 +301,7 @@ def purchase_places():
 
     update_competition_available_places(competition=competition, places=places_required)
 
-    flash(f"Great! Booking of {places_required} places for "
+    flash(f"Great! Booking of {places_required} place(s) for "
           f"{competition['name']} competition complete!")
 
     return render_template(template_name_or_list='welcome.html',
@@ -316,9 +317,14 @@ def points_board():
             club["color"] = "#aaaaaa"
         clubs_for_board.append(club)
 
-    return render_template(template_name_or_list='points_board.html', clubs=clubs_for_board)
+    club = session.get('club')
+
+    return render_template(template_name_or_list='points_board.html',
+                           clubs=clubs_for_board,
+                           club=club)
 
 @app.route('/logout')
 def logout():
     flash("Great! You are successfully logged out.")
+    session.pop('club')
     return redirect(url_for('index'))
