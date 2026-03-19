@@ -34,7 +34,7 @@ The application must:
 - ### Clone the repository :
 
 ```
-git clone https://github.com/Tit-Co/OpenClassrooms_Project_10.git
+git clone https://github.com/Tit-Co/OpenClassrooms_Project_11.git
 ```
 
 - ### Navigate into the project directory :
@@ -185,7 +185,7 @@ to the validation or rejection of the entry.
 ---
 ## PEP 8 CONVENTIONS
 
-- Flake 8 report
+- Flake 8 report (yet to come)
 <p align="center">
     <img src="docs/flake8_report.png" width="auto" style="border: 1px solid grey; border-radius: 10px;">
 </p>
@@ -211,7 +211,7 @@ Cov report
 
 ## PERFORMANCE TESTS WITH LOCUST
 
-Locust report
+Locust report (yet to come)
 <p align="center">
     <img src="docs/locust_report.png" width="auto" style="border: 1px solid grey; border-radius: 10px;">
 </p>
