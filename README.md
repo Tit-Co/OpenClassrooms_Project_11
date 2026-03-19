@@ -1,51 +1,233 @@
-# gudlift-registration
+# Flask App - OpenClassrooms Project 11
+**Improve a web Flask app by testing and debugging**
 
-1. Why
+---
 
+## DESCRIPTION
 
-    This is a proof of concept (POC) project to show a light-weight version of our competition booking platform. The aim is the keep things as light as possible, and use feedback from the users to iterate.
+This project was completed as part of the "Python Developer" path at OpenClassrooms.
 
-2. Getting Started
+The goal was to improve a web application, through testing and debugging, capable of:
 
-    This project uses the following technologies:
+- managing lifting competitions
+- allowing clubs to authenticate themselves within the application
+- allowing clubs to reserve places in several lifting competitions
 
-    * Python v3.x+
+The application must:
 
-    * [Flask](https://flask.palletsprojects.com/en/1.1.x/)
+- allow the club secretary to log in.
+- allow the club secretary to view competitions and other clubs' points.
+- allow the club secretary to use their points to purchase competition tickets.
+- display error messages in case of incorrect action, according to the application specifications.
 
-        Whereas Django does a lot of things for us out of the box, Flask allows us to add only what we need. 
-     
+---
 
-    * [Virtual environment](https://virtualenv.pypa.io/en/stable/installation.html)
+## PROJECT STRUCTURE
+<p align="center">
+    <img src="docs/structure.png" width="auto" style="border: 1px solid grey; border-radius: 10px;">
+</p>
 
-        This ensures you'll be able to install the correct packages without interfering with Python on your machine.
+---
 
-        Before you begin, please ensure you have this installed globally. 
+## INSTALLATION
 
+- ### Clone the repository :
 
-3. Installation
+```
+git clone https://github.com/Tit-Co/OpenClassrooms_Project_10.git
+```
 
-    - After cloning, change into the directory and type <code>virtualenv .</code>. This will then set up a a virtual python environment within that directory.
+- ### Navigate into the project directory :
+    `cd OpenClassrooms_Project_11`
 
-    - Next, type <code>source bin/activate</code>. You should see that your command prompt has changed to the name of the folder. This means that you can install packages in here without affecting affecting files outside. To deactivate, type <code>deactivate</code>
+- ### Create a virtual environment and dependencies :
 
-    - Rather than hunting around for the packages you need, you can install in one step. Type <code>pip install -r requirements.txt</code>. This will install all the packages listed in the respective file. If you install a package, make sure others know by updating the requirements.txt file. An easy way to do this is <code>pip freeze > requirements.txt</code>
+1. #### With [uv](https://docs.astral.sh/uv/)
 
-    - Flask requires that you set an environmental variable to the python file. However you do that, you'll want to set the file to be <code>server.py</code>. Check [here](https://flask.palletsprojects.com/en/1.1.x/quickstart/#a-minimal-application) for more details
+    `uv` is an environment and dependencies manager.
+    
+    - #### Install environment and dependencies
+    
+    `uv sync`
 
-    - You should now be ready to test the application. In the directory, type either <code>flask run</code> or <code>python -m flask run</code>. The app should respond with an address you should be able to go to using your browser.
+2. #### With pip
 
-4. Current Setup
+   - #### Install the virtual env :
 
-    The app is powered by [JSON files](https://www.tutorialspoint.com/json/json_quick_guide.htm). This is to get around having a DB until we actually need one. The main ones are:
-     
-    * competitions.json - list of competitions
-    * clubs.json - list of clubs with relevant information. You can look here to see what email addresses the app will accept for login.
+    `python -m venv env`
 
-5. Testing
+   - #### Activate the virtual env :
+    `source env/bin/activate`  
+    Or  
+    `env\Scripts\activate` on Windows  
 
-    You are free to use whatever testing framework you like-the main thing is that you can show what tests you are using.
+3. #### With [Poetry](https://python-poetry.org/docs/)
 
-    We also like to show how well we're testing, so there's a module called 
-    [coverage](https://coverage.readthedocs.io/en/coverage-5.1/) you should add to your project.
+    `Poetry` is a tool for dependency management and packaging in Python.
+    
+    - #### Install the virtual env :
+    `py -3.13 -m venv env`
+    
+    - #### Activate the virtual env :
+    `poetry env activate`
 
+- ### Install dependencies 
+  1. #### With [uv](https://docs.astral.sh/uv/)
+      `uv sync` or `uv pip install -r requirements.txt`
+
+  2. #### With pip
+      `pip install -r requirements.txt` 
+
+  3. #### With [Poetry](https://python-poetry.org/docs/)
+      `poetry install`
+  
+     (NB : Poetry and uv will read the `pyproject.toml` file to know which dependencies to install)
+
+---
+
+## USAGE
+
+### Launching server
+- Open a terminal
+- Go to project folder - example : `cd gudlft`
+- Activate the virtual environment as described previously
+- Create flask environment : `$env:FLASK_APP = "server"` (for example in Powershell)
+- Launch the Django server : `flask run`
+
+### Launching the APP
+- Open a web browser
+- And type the URL : `http://127.0.0.1:5000/`
+
+---
+
+## ISSUES THAT HAS BEEN FIXED
+
+- A user types in an email not found in the system
+- The club should not be able to redeem more points than available
+- The club should be able to book no more than 12 places
+- The club should not be able to book a place on a post-dated competition (but past competitions should be visible). 
+- The amount of points used should be deducted from the club's balance
+- The club should be able to see the list of clubs and their associated current points balance
+- The club should not be able to book more than the competition places available
+
+---
+
+## EXPLANATIONS OF WHAT THE APP DOES
+
+### <u>Registration</u>
+- The user can sign in the application by typing the club name, email and password (two times).
+
+### <u>Authentication</u>
+- The user can log in the application by typing the club email and password.
+
+### <u>Profile page</u>
+- The user can see the club profile by clicking on "go to profile" link in welcome page.
+
+### <u>Welcome page</u>
+- The user can view all past and upcoming competitions, and access the booking page by clicking on the competition they
+wish to participate in.
+
+### <u>Booking page</u>
+- The user can book places in the competition by typing the number of places. The UI will display a message according 
+to the validation or rejection of the entry.
+
+### <u>Log out</u>
+- The user can log out by clicking the appropriate link.
+
+### <u>Points board</u>
+- The user can view the points board with all the clubs and their points. 
+- No need to be authenticated to see this board.
+
+---
+
+## TEMPLATES EXAMPLES
+
+- Registration
+<p align="center">
+    <img src="docs/screenshots/registration_screenshot.png" width="auto" style="border: 1px solid grey; border-radius: 10px;">
+</p>
+
+- Authentication
+<p align="center">
+    <img src="docs/screenshots/authentication_screenshot.png" width="auto" style="border: 1px solid grey; border-radius: 10px;">
+</p>
+
+- Profile page
+<p align="center">
+    <img src="docs/screenshots/profile_screenshot.png" width="auto" style="border: 1px solid grey; border-radius: 10px;">
+</p>
+
+- Change password
+<p align="center">
+    <img src="docs/screenshots/password_screenshot.png" width="auto" style="border: 1px solid grey; border-radius: 10px;">
+</p>
+
+- Points board
+<p align="center">
+    <img src="docs/screenshots/points_board_screenshot.png" width="auto" style="border: 1px solid grey; border-radius: 10px;">
+</p>
+
+- Welcome page
+<p align="center">
+    <img src="docs/screenshots/welcome_page_screenshot.png" width="auto" style="border: 1px solid grey; border-radius: 10px;">
+</p>
+
+- Booking page
+<p align="center">
+    <img src="docs/screenshots/booking_screenshot.png" width="auto" style="border: 1px solid grey; border-radius: 10px;">
+</p>
+
+- Log out
+<p align="center">
+    <img src="docs/screenshots/logout_screenshot.png" width="auto" style="border: 1px solid grey; border-radius: 10px;">
+</p>
+
+---
+## PEP 8 CONVENTIONS
+
+- Flake 8 report
+<p align="center">
+    <img src="docs/flake8_report.png" width="auto" style="border: 1px solid grey; border-radius: 10px;">
+</p>
+
+**Type the line below in the terminal to generate another report with [flake8-html](https://pypi.org/project/flake8-html/) tool :**
+
+` flake8 --format=html --htmldir=flake8-report --max-line-length=119 --extend-exclude=env/`
+
+---
+
+## TESTS COVERAGE WITH PYTEST
+
+Cov report
+<p align="center">
+    <img src="docs/cov_report.png" width="auto" style="border: 1px solid grey; border-radius: 10px;">
+</p>
+
+- **Type the line below in the terminal to generate another coverage report with pytest**
+
+    `pytest --cov=server --cov-report=html:<name-of-report-folder>`
+
+---
+
+## PERFORMANCE TESTS WITH LOCUST
+
+Locust report
+<p align="center">
+    <img src="docs/locust_report.png" width="auto" style="border: 1px solid grey; border-radius: 10px;">
+</p>
+
+- **Launch the application as described previously**
+
+- **Open another terminal, activate the virtual env, and type the `locust` command to launch the performance tests**
+
+---
+
+![Python](https://img.shields.io/badge/python-3.13-blue.svg)
+![License](https://img.shields.io/badge/license-MIT-green.svg)
+
+---
+
+## AUTHOR
+**Name**: Nicolas MARIE  
+**Track**: Python Developer – OpenClassrooms  
+**Project 11 – Improve a Flask web app by testing and debugging – March 2025**
