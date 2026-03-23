@@ -1,23 +1,33 @@
 import sys
 import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
+import random
+import json
+import tempfile
 
-import server
-
-def fake_save(*args, **kwargs):
-    pass
-
-server.save_clubs = fake_save
-server.save_competitions = fake_save
-server.update_club_booked_places = fake_save
-server.update_competition_available_places = fake_save
-
-import copy
 from locust import HttpUser, task, between
 
-real_clubs = server.clubs
-real_competitions = server.competitions
 
+temp_clubs_file = tempfile.NamedTemporaryFile(mode='w+', delete=False, suffix='.json')
+temp_comps_file = tempfile.NamedTemporaryFile(mode='w+', delete=False, suffix='.json')
+json.dump({"clubs": []}, temp_clubs_file)
+json.dump({"competitions": []}, temp_comps_file)
+temp_clubs_file.close()
+temp_comps_file.close()
+
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))
+sys.path.insert(0, BASE_DIR)
+
+
+import utils, copy
+
+utils.get_clubs_path = lambda: temp_clubs_file.name
+utils.get_competitions_path = lambda: temp_comps_file.name
+
+with open(os.path.join(BASE_DIR, "clubs.json")) as f:
+    real_clubs = json.load(f)["clubs"]
+
+with open(os.path.join(BASE_DIR, "competitions.json")) as f:
+    real_competitions = json.load(f)["competitions"]
 
 class TestPerfApp(HttpUser):
     wait_time = between(1, 3)
@@ -31,18 +41,35 @@ class TestPerfApp(HttpUser):
         return copy.deepcopy(real_competitions)
 
     def on_start(self):
-        self.clubs = self.get_clubs()
-        self.competitions = self.get_competitions()
+        self.clubs = copy.deepcopy(real_clubs)
+        self.competitions = copy.deepcopy(real_competitions)
 
-        server.clubs = self.clubs
-        server.competitions = self.competitions
+        utils.clubs = self.clubs
+        utils.competitions = self.competitions
 
-        club = [c for c in self.clubs if c["name"]=="Simply Lift"][0]
+        passwords_table = {
+            "Simply Lift": "tgl_Prn_C2",
+            "Iron Temple": "tgl_Prn_C3",
+            "Power Lift": "tgl_Prn_C4",
+            "She Lifts": "tgl_Prn_C5",
+            "Iron Titans": "tgl_Prn_C6",
+            "Barbell Warriors": "tgl_Prn_C7",
+            "Power Lifts Club": "tgl_Prn_C8",
+            "Steel Strength": "tgl_Prn_C9",
+            "The Weightroom": "tgl_Prn_C10",
+            "Olympic Lifters": "tgl_Prn_C11",
+            "Titanium Tribes": "tgl_Prn_C12",
+            "Heavy Hitters": "tgl_Prn_C13",
+        }
+
+        self.club = random.choice(utils.clubs)
+        self.club["points"] = 60
+
         self.client.post(
             "/showSummary",
             data={
-                "email": club["email"],
-                "password": "tgl_Prn_C2"
+                "email": self.club["email"],
+                "password": passwords_table[self.club["name"]]
             }
         )
 
@@ -52,12 +79,18 @@ class TestPerfApp(HttpUser):
 
     @task(3)
     def book_places(self):
-        club = [c for c in self.clubs if c["name"]=="Simply Lift"][0]
-        competition = [c for c in self.competitions if c["name"] == "Spring Festival"][0]
+        while True:
+            competition = random.choice(utils.competitions)
+            if not competition.get("is_past"):
+                break
 
-        self.client.post('/purchasePlaces', data=dict(competition=competition["name"],
-                                                      club=club["name"],
-                                                      places="2"))
+        competition["number_of_places"] = 60
+
+        self.client.post('/purchasePlaces', data={
+            "competition": competition["name"],
+            "club": self.club["name"],
+            "places": "1"
+        })
 
     @task(1)
     def logout(self):

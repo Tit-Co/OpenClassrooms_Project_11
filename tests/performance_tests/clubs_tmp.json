@@ -13,12 +13,6 @@
             "points": "15"
         },
         {
-            "name": "Steel Strength",
-            "email": "hello@steelstrength.org",
-            "password": "scrypt:32768:8:1$uGiMzIndzui0kLQp$50ef79e3db9134208a46072a6297637a5636d81ca10b9a42d69883c8a12ee021fdab58df6019339ebc8924312598c4d37a6d71ce8647177241ddf012c69acafc",
-            "points": "15"
-        },
-        {
             "name": "Heavy Hitters",
             "email": "admin@heavyhitters.net",
             "password": "scrypt:32768:8:1$U4IUVIbiypkLsiwd$b57afe44db3af13b7e9772560a228c1100f41c3222b0cbbaa5c8855632fbca004c7d2ca36d7bef52624ee028373a0cd90df65fb9b73d4eb119ad1edf3a741bf9",
@@ -29,12 +23,6 @@
             "email": "admin@powerlifts.com",
             "password": "scrypt:32768:8:1$zdBGCvw6xXxHzAGl$c4534f2b7b2089aeca6f50bf3221f86f885aa4139692844149becf3c56b37a3c8f6a5f7c47e8c4f60405d591f58cf8f9567d1e383396a5f4de87073d441e5fe3",
             "points": "15"
-        },
-        {
-            "name": "Iron Temple",
-            "email": "admin@irontemple.com",
-            "password": "scrypt:32768:8:1$rHMWqkkiOSz7QiYU$e1a798fc6d464425359fb999db786ffbe39f6059e195d6d22a15e3ed70be3b5630e1d828399ca241f9d94e109ee5b350067f14a8054079344f01495c73594021",
-            "points": "4"
         },
         {
             "name": "Olympic Lifters",
@@ -55,22 +43,49 @@
             "points": "13"
         },
         {
+            "name": "The Weightroom",
+            "email": "team@weightroom.com",
+            "password": "scrypt:32768:8:1$38I8jEaWVYS5jgcA$0b29c9aa0e7f52b2634516d46b312ba429d2748fd4d72973f83275d4ada39907a6bae0389d31a868acdd4b5b43363515186f86e5f7419f9253d092c94d2a9185",
+            "points": "15"
+        },
+        {
+            "name": "Steel Strength",
+            "email": "hello@steelstrength.org",
+            "password": "scrypt:32768:8:1$uGiMzIndzui0kLQp$50ef79e3db9134208a46072a6297637a5636d81ca10b9a42d69883c8a12ee021fdab58df6019339ebc8924312598c4d37a6d71ce8647177241ddf012c69acafc",
+            "points": "14",
+            "booked_places": {
+                "Spring Festival": "1"
+            }
+        },
+        {
             "name": "She Lifts",
             "email": "kate@shelifts.co.uk",
             "password": "scrypt:32768:8:1$E4fcXT3MQ7oVfc0w$cf31c4a6aec02d4532ffcae03670b12f20265036a3ae5ee941fae6d135ca2db5e406fe9e6c6eded7776e0c256f6d8970f2cbfb74ee50a1c7f9b49b1ad6819b40",
-            "points": "12"
+            "points": "10",
+            "booked_places": {
+                "Spring Festival": "1",
+                "Heavyweight First": "1"
+            }
+        },
+        {
+            "name": "Iron Temple",
+            "email": "admin@irontemple.com",
+            "password": "scrypt:32768:8:1$rHMWqkkiOSz7QiYU$e1a798fc6d464425359fb999db786ffbe39f6059e195d6d22a15e3ed70be3b5630e1d828399ca241f9d94e109ee5b350067f14a8054079344f01495c73594021",
+            "points": "1",
+            "booked_places": {
+                "Powerlifting Open": "1",
+                "Regional Strength": "1",
+                "Heavyweight First": "1"
+            }
         },
         {
             "name": "Iron Titans",
             "email": "contact@irontitans.com",
             "password": "scrypt:32768:8:1$kRW7krsT6zGr4iLk$6a24553114aa57f8cf4297786bf6136fa1d6f5f9832c6157fb406eb4459fcde2a82ed2a64d890ebe5e9a6efe73376239c59a124c77b6bd79b371c84095496b78",
-            "points": "15"
-        },
-        {
-            "name": "The Weightroom",
-            "email": "team@weightroom.com",
-            "password": "scrypt:32768:8:1$38I8jEaWVYS5jgcA$0b29c9aa0e7f52b2634516d46b312ba429d2748fd4d72973f83275d4ada39907a6bae0389d31a868acdd4b5b43363515186f86e5f7419f9253d092c94d2a9185",
-            "points": "15"
+            "points": "13",
+            "booked_places": {
+                "Heavyweight First": "2"
+            }
         }
     ]
 }

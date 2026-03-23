@@ -1,149 +1,127 @@
 import os
-import json
 import re
 
-from datetime import datetime
 from flask import Flask, render_template, request, redirect, flash, url_for, session
 from werkzeug.security import generate_password_hash, check_password_hash
-
-
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-
-def load_clubs():
-    path = os.path.join(BASE_DIR, 'clubs.json')
-    with open(path) as c:
-         list_of_clubs = json.load(c)['clubs']
-         return list_of_clubs
-
-def load_competitions():
-    path = os.path.join(BASE_DIR, 'competitions.json')
-    with open(path) as comps:
-         list_of_competitions = json.load(comps)['competitions']
-         return list_of_competitions
 
 app = Flask(__name__)
 app.secret_key = 'something_special'
 
-competitions = load_competitions()
-clubs = load_clubs()
+app.config["CLUBS_JSON"] = os.environ.get("CLUBS_JSON")
+app.config["COMPETITIONS_JSON"] = os.environ.get("COMPETITIONS_JSON")
 
 CLUB_POINTS = 15
 
-def update_club_booked_places(club, places, competition_name):
-    clubs.remove(club)
+import utils
 
-    club.setdefault("booked_places", {})
-    current = int(club["booked_places"].get(competition_name, 0))
-    club["booked_places"][competition_name] = str(current + places)
-
-    club["points"] = str(int(club["points"]) - places)
-
-    clubs.append(club)
-    save_clubs()
-
-def save_clubs():
-    with open('clubs.json', 'w') as c:
-        list_of_clubs = {"clubs": clubs}
-        json.dump(list_of_clubs, c, indent=4)
-
-def update_competition_available_places(competition, places):
-    competitions.remove(competition)
-
-    competition['number_of_places'] = str(int(competition['number_of_places']) - places)
-
-    competitions.append(competition)
-    save_competitions()
-
-def save_competitions():
-    with open('competitions.json', 'w') as comps:
-        list_of_competitions = {"competitions": competitions}
-        json.dump(list_of_competitions, comps, indent=4)
-
-def add_club(name, email, password, points):
-    clubs.append({"name": name, "email": email, "password": password, "points": points})
-    save_clubs()
-
-def update_club_password(club, password):
-    hashed_password = generate_password_hash(password)
-    club["password"] = hashed_password
-    save_clubs()
-    return club
-
-def check_all_fields_filled_out(name, email, password, password2):
-    if len(name) == 0 or len(email) == 0 or len(password) == 0 or len(password2) == 0:
-        return False
-    return True
+utils.clubs = utils.load_clubs()
+utils.competitions = utils.load_competitions()
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    """
+    Route to home page
+    Returns:
+        The template for home page
+    """
+    return render_template(template_name_or_list='index.html')
 
 @app.route('/signUp')
 def sign_up():
-    return render_template('sign_up.html')
+    """
+    Route to sign up page
+    Returns:
+        The template for sign up page
+    """
+    return render_template(template_name_or_list='sign_up.html')
 
 @app.route('/profile/<club>', methods=['GET'])
 def profile(club):
+    """
+    Route to club profile page
+    Args:
+        club (str): The club name
+
+    Returns:
+        The template for club profile page. The template may display a message to the user.
+    """
     if "club" in session and session['club'] == club:
-        the_club = next((c for c in clubs if c['name'] == club), None)
+        the_club = next((c for c in utils.clubs if c['name'] == club), None)
 
         if the_club is None:
-            flash("Sorry, that club was not found.")
+            flash(message="Sorry, that club was not found.")
             return render_template(template_name_or_list="index.html", error="Club not found"), 404
 
         return render_template(template_name_or_list='profile.html', club=the_club)
 
-    flash("Sorry, you are not allow to see that profile.")
+    flash(message="Sorry, you are not allow to see that profile.")
     return render_template(template_name_or_list='index.html', error="Not allow"), 403
 
 @app.route('/profile', methods=['POST'])
 def profile_post():
+    """
+    Route for signing up.
+    Returns:
+        The template to profile page if correctly signed up or sign up page otherwise.
+    """
     club_name = request.form['name']
     club_email = request.form['email']
     club_password = request.form['password']
     club_password_confirmation = request.form['confirm_password']
 
     error_message = ""
-    if not check_all_fields_filled_out(club_name, club_email, club_password, club_password):
+    if not utils.check_all_fields_filled_out(club_name, club_email, club_password, club_password):
         error_message = "Sorry, please fill all fields"
 
     elif not re.match(r'\b[A-Za-z0-9._+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b', club_email):
         error_message = "Sorry, the e-mail address you entered has invalid format."
 
     if error_message:
-        flash(error_message)
-        return redirect(url_for('sign_up'))
+        flash(message=error_message)
+        return redirect(location=url_for('sign_up'))
 
-    club_exists = next((c for c in clubs if c['email'] == club_email or c['name'] == club_name), None)
+    club_exists = next((c for c in utils.clubs if c['email'] == club_email or c['name'] == club_name), None)
     if club_exists is None:
         if club_password != club_password_confirmation:
-            flash('Sorry, passwords do not match')
-            return redirect(url_for('sign_up'))
+            flash(message='Sorry, passwords do not match')
+            return redirect(location=url_for('sign_up'))
 
         hashed_password = generate_password_hash(club_password)
-        add_club(club_name, club_email, hashed_password, str(CLUB_POINTS))
+        utils.add_club(name=club_name,
+                       email=club_email,
+                       password=hashed_password,
+                       points=str(CLUB_POINTS))
 
-        the_club = next((c for c in clubs if c['email'] == club_email), None)
+        the_club = next((c for c in utils.clubs if c['email'] == club_email), None)
 
         if the_club is None:
-            flash("Sorry, something went wrong. Please try again.")
+            flash(message="Sorry, something went wrong. Please try again.")
             return render_template(template_name_or_list='sign_up.html')
 
-        flash("Great! You have successfully signed up.")
+        flash(message="Great! You have successfully signed up.")
+        session['club'] = the_club['name']
         return render_template(template_name_or_list='profile.html', club=the_club)
 
     else:
-        flash("Sorry, the club already exists.")
+        flash(message="Sorry, the club already exists.")
         return render_template(template_name_or_list='sign_up.html')
 
 @app.route('/changePassword/<club>', methods=['GET', 'POST'])
 def change_password(club):
+    """
+    Route to change password.
+    Args:
+        club (str): The club name
+
+    Returns:
+        The template for club profile page. The index template otherwise.
+    """
     if "club" in session and session['club'] == club:
         if request.method == 'GET':
-            the_club = next((c for c in clubs if c['name'] == club), None)
+            the_club = next((c for c in utils.clubs if c['name'] == club), None)
 
             if the_club is None:
-                flash("Sorry, that club was not found.")
+                flash(message="Sorry, that club was not found.")
                 return render_template(template_name_or_list="index.html", error="Email not found"), 404
 
             return render_template(template_name_or_list='change_password.html', club=the_club)
@@ -151,99 +129,100 @@ def change_password(club):
             club_password = request.form['password']
             club_password_confirmation = request.form['confirm_password']
 
-            error_message = ""
-            if len(club_password) == 0 or len(club_password_confirmation) == 0:
-                error_message = "Sorry, please fill all fields."
+            the_club = next((c for c in utils.clubs if c['name'] == club), None)
 
-            elif club_password != club_password_confirmation:
-                error_message = "Sorry, passwords do not match."
+            error_message, error_tag = utils.validate_password(password=club_password,
+                                                               password2=club_password_confirmation,
+                                                               club=the_club)
 
-            if error_message:
-                flash(error_message)
-                return render_template(template_name_or_list='change_password.html', club=club), 406
+            if error_message and error_tag:
+                flash(message=error_message)
+                return render_template(template_name_or_list='change_password.html',
+                                       club=the_club,
+                                       error=error_tag), 406
 
-            the_club = next((c for c in clubs if c['name'] == club), None)
-
-            if check_password_hash(the_club['password'], club_password):
-                flash('Sorry, you have to type a new different password.')
-                return render_template(template_name_or_list='change_password.html', club=the_club), 406
-
-            the_club = update_club_password(the_club, club_password)
+            the_club = utils.update_club_password(the_club, club_password)
 
             if the_club:
-                flash("Great! You have successfully changed your password.")
+                flash(message="Great! You have successfully changed your password.")
                 return render_template(template_name_or_list='profile.html', club=the_club)
 
-            flash("Sorry, something went wrong. Please try again.")
+            flash(message="Sorry, something went wrong. Please try again.")
             return render_template(template_name_or_list='index.html')
 
-    flash("Sorry, you are not allow to do this action.")
+    flash(message="Sorry, you are not allow to do this action.")
     return render_template(template_name_or_list='index.html', error="Not allow"), 403
 
 
 @app.route('/showSummary/<club>', methods=['GET'])
 def show_summary(club):
+    """
+    Route to club summary page
+    Args:
+        club (str): The club name
+
+    Returns:
+        The welcome template if authorized. The index template otherwise.
+    """
     if "club" in session and session['club'] == club:
-        the_club = next((c for c in clubs if c['name'] == club), None)
+        the_club = next((c for c in utils.clubs if c['name'] == club), None)
+
         return render_template(template_name_or_list='welcome.html',
                                club=the_club,
-                               competitions=competitions)
+                               competitions=utils.competitions)
 
-    flash("Sorry, you are not allow to do this action.")
+    flash(message="Sorry, you are not allow to do this action.")
     return render_template(template_name_or_list='index.html', error="Not allow"), 403
 
 @app.route('/showSummary', methods=['POST'])
 def show_summary_post():
-    the_club = next((c for c in clubs if c['email'] == request.form['email']), None)
+    """
+    Route to log in.
+    Returns:
+        The welcome template if success. The index template otherwise.
+    """
+    the_club = next((c for c in utils.clubs if c['email'] == request.form['email']), None)
 
     if the_club is None:
-        flash("Sorry, that email was not found.")
+        flash(message="Sorry, that email was not found.")
         return render_template(template_name_or_list="index.html", error="Email not found"), 404
 
     if not check_password_hash(the_club['password'], request.form['password']):
-        flash("Sorry, the password is incorrect.")
-        return render_template(template_name_or_list="index.html",)
+        flash(message="Sorry, the password is incorrect.")
+        return render_template(template_name_or_list="index.html", error="Incorrect password"), 403
 
     session["club"] = the_club["name"]
 
     flash("Great! You are successfully logged in.")
     return render_template(template_name_or_list='welcome.html',
                            club=the_club,
-                           competitions=competitions)
+                           competitions=utils.competitions)
 
 @app.route('/book/<competition>/<club>')
 def book(competition, club):
+    """
+    Route to book page
+    Args:
+        competition (str): The competition name
+        club (str): The club name
+
+    Returns:
+        The booking template if success. The welcome template if error. The index template otherwise.
+    """
     if "club" in session and session['club'] == club:
-        found_club = [c for c in clubs if c['name'] == club][0]
-        found_competition = [c for c in competitions if c['name'] == competition][0]
+        found_club = [c for c in utils.clubs if c['name'] == club][0]
+        found_competition = [c for c in utils.competitions if c['name'] == competition][0]
 
-        now = datetime.now()
-
-        competition_date = datetime.strptime(found_competition['date'], '%Y-%m-%d %H:%M:%S')
-
-        error_message = ""
-        error_tag = ""
-
-        the_competition = next((a_competition for a_competition in competitions
-                                if a_competition['name'] == competition), None)
-        competition_places = int(the_competition['number_of_places'])
-
-        if now > competition_date:
-            error_message = "Sorry, this competition is outdated. Booking not possible."
-            error_tag = "Outdated"
-
-        elif competition_places == 0:
-            error_message = "Sorry, this competition is sold out. Booking not possible."
-            error_tag = "Sold out"
+        error_message, error_tag = utils.validate_competition(the_competition=found_competition)
 
         if error_message and error_tag:
-            flash(error_message)
+            flash(message=error_message)
 
-            the_club = next((a_club for a_club in clubs if a_club['name'] == club), None)
+            the_club = next((a_club for a_club in utils.clubs if a_club['name'] == club), None)
 
             return render_template(template_name_or_list='welcome.html',
                                    club=the_club,
-                                   competitions=competitions,
+                                   competitions=utils.competitions,
                                    error=error_tag), 403
 
         if found_club and found_competition:
@@ -251,71 +230,64 @@ def book(competition, club):
                                    club=found_club,
                                    competition=found_competition)
         else:
-            flash("Sorry, something went wrong. Please try again.")
+            flash(message="Sorry, something went wrong. Please try again.")
             return render_template(template_name_or_list='welcome.html',
                                    club=club,
-                                   competitions=competitions)
+                                   competitions=utils.competitions)
 
-    flash("Sorry, you are not allow to do this action.")
+    flash(message="Sorry, you are not allow to do this action.")
     return render_template(template_name_or_list='index.html', error="Not allow"), 403
 
 @app.route('/purchasePlaces', methods=['POST'])
 def purchase_places():
-    competition = [c for c in competitions if c['name'] == request.form['competition']][0]
-    club = [c for c in clubs if c['name'] == request.form['club']][0]
+    """
+    Route to purchase places page
+    Returns:
+        The welcome template if success. The welcome template with error message otherwise.
+    """
+    competition = [c for c in utils.competitions if c['name'] == request.form['competition']][0]
+    club = [c for c in utils.clubs if c['name'] == request.form['club']][0]
 
     places_required = int(request.form['places']) if request.form['places'] else 0
 
-    cumulative_places = places_required + int(club["booked_places"][competition["name"]]) \
-        if "booked_places" in club else places_required
-
-    error_message = ""
-    error_tag = ""
-
-    if places_required <= 0:
-        error_message = "Sorry, you should type a positive number."
-        error_tag = "Negative number"
-
-    elif cumulative_places > 12:
-        error_message = "Sorry, you are not allow to purchase more than 12 places for this competition."
-        error_tag = "Over 12 places"
-
-    elif places_required > int(competition['number_of_places']):
-        error_message = "Sorry, there are not enough places available for this competition."
-        error_tag = "Not enough places"
-
-    elif places_required > int(club['points']):
-        error_message = "Sorry, you do not have enough points to purchase."
-        error_tag = "Not enough points"
+    error_message, error_tag = utils.validate_places(places_required=places_required,
+                                                     club=club,
+                                                     the_competition=competition)
 
     if error_message and error_tag:
-        flash(error_message)
+        flash(message=error_message)
         return render_template(template_name_or_list='welcome.html',
                                club=club,
-                               competitions=competitions,
+                               competitions=utils.competitions,
                                error=error_tag), 403
 
-    update_club_booked_places(club=club,
-                              places=places_required,
-                              competition_name=competition["name"])
+    utils.update_club_booked_places(club=club,
+                                    places=places_required,
+                                    competition_name=competition["name"])
 
-    update_competition_available_places(competition=competition, places=places_required)
+    utils.update_competition_available_places(the_competition=competition, places=places_required)
 
-    flash(f"Great! Booking of {places_required} place(s) for "
-          f"{competition['name']} competition complete!")
+    flash(message=f"Great! Booking of {places_required} place(s) for "
+                  f"{competition['name']} competition complete!")
 
     return render_template(template_name_or_list='welcome.html',
                            club=club,
-                           competitions=competitions)
+                           competitions=utils.competitions)
 @app.route('/pointsBoard')
 def points_board():
+    """
+    Route to points board page
+    Returns:
+        The points board template.
+    """
     clubs_for_board=[]
-    for club in clubs:
-        if clubs.index(club) %2 == 0:
-            club["color"] = "#cccccc"
+    for club in utils.clubs:
+        club_copy = club.copy()
+        if utils.clubs.index(club) %2 == 0:
+            club_copy["color"] = "#cccccc"
         else:
-            club["color"] = "#aaaaaa"
-        clubs_for_board.append(club)
+            club_copy["color"] = "#aaaaaa"
+        clubs_for_board.append(club_copy)
 
     club = session.get('club')
 
@@ -325,6 +297,12 @@ def points_board():
 
 @app.route('/logout')
 def logout():
-    flash("Great! You are successfully logged out.")
-    session.pop('club')
-    return redirect(url_for('index'))
+    """
+    Route for logging out
+    Returns:
+        The index template.
+    """
+    flash(message="Great! You are successfully logged out.")
+    if 'club' in session:
+        session.pop('club')
+    return redirect(location=url_for('index'))

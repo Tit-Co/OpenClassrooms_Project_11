@@ -6,7 +6,11 @@
                 <ul>
                {% for message in messages %}
                     {% if "Sorry" in message %}
-                        <li style="color: darkred;">❌&nbsp;{{message}}</li>
+                        {% if error %}
+                            <li style="color: darkred;">{{ error }} - ❌&nbsp;{{message}}</li>
+                        {% else %}
+                            <li style="color: darkred;">❌&nbsp;{{message}}</li>
+                        {% endif %}
                    {% else %}
                         <li style="color: darkgreen;">✅&nbsp;{{message}}</li>
                    {% endif %}
@@ -16,7 +20,6 @@
         {%endwith%}
     </div>
     <h2>Registration</h2>
-
     ⯈ Please enter your details
     <br><br>
     <form action="profile" method="post">
@@ -24,13 +27,13 @@
         <input type="text" name="name" id="name"/>
         <label for="email">Email:</label>
         <input type="email" name="email" id="email"/>
-        <br><br>
+        <br<br>
         <label for="password">Password:</label>
         <input type="password" name="password" id="password"/>
-
         <label for="confirm_password">Confirm Password:</label>
         <input type="password" name="confirm_password" id="confirm-password"/>
-        <br><br>
+        <br>
+        <br>
         <button type="submit" id="signup">Create club profile</button>
     </form>
     <a class="book" href="{{ url_for("index") }}">Go back</a>

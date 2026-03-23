@@ -6,7 +6,11 @@
                 <ul>
                {% for message in messages %}
                     {% if "Sorry" in message %}
-                        <li style="color: darkred;">❌&nbsp;{{message}}</li>
+                        {% if error %}
+                            <li style="color: darkred;">{{ error }} - ❌&nbsp;{{message}}</li>
+                        {% else %}
+                            <li style="color: darkred;">❌&nbsp;{{message}}</li>
+                        {% endif %}
                    {% else %}
                         <li style="color: darkgreen;">✅&nbsp;{{message}}</li>
                    {% endif %}
@@ -15,16 +19,13 @@
             {% endif%}
         {%endwith%}
     </div>
-
     <h2>Authentication</h2>
-
     ⯈ Please enter your secretary email and your password to continue or <a href="{{url_for('sign_up')}}">sign up</a>
     <br>
     <br>
     <form action="showSummary" method="post">
         <label for="email">Email:</label>
         <input type="email" name="email" id="email"/>
-
         <label for="password">Password:</label>
         <input type="password" name="password" id="password"/>
         <br><br>

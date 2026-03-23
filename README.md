@@ -201,6 +201,7 @@ to the validation or rejection of the entry.
 Cov report
 <p align="center">
     <img src="docs/cov_report.png" width="auto" style="border: 1px solid grey; border-radius: 10px;">
+    <img src="docs/cov_report_2.png" width="auto" style="border: 1px solid grey; border-radius: 10px;">
 </p>
 
 - **Type the line below in the terminal to generate another coverage report with pytest**

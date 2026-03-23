@@ -14,6 +14,11 @@ def client():
 
 @pytest.fixture
 def get_clubs():
+    """
+    Fixture that returns fictive clubs list
+    Returns:
+        The list of fictive clubs
+    """
     the_clubs = [
     {
         "name":"Simply Lift",
@@ -46,6 +51,11 @@ def get_clubs():
 
 @pytest.fixture
 def get_competitions():
+    """
+    Method that returns a list of fictive competitions
+    Returns:
+        The list of fictive competitions
+    """
     the_competitions = [
         {
             "name": "Fall Classic",
@@ -124,6 +134,16 @@ def get_existing_competition_and_club_3():
 @pytest.fixture
 def get_existing_competition_and_club_4():
     data = {"competition": "Summer Stronger", "club": "Power Lift"}
+    return data
+
+@pytest.fixture
+def get_existing_competition_and_club_5():
+    data = {"competition": "Winter Power", "club": "Power Lift"}
+    return data
+
+@pytest.fixture
+def get_existing_competition_and_club_6():
+    data = {"competition": "Spring Festival", "club": "Power Lift"}
     return data
 
 @pytest.fixture

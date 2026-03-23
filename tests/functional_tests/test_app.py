@@ -8,13 +8,18 @@ from selenium.webdriver.firefox.service import Service
 class TestFunctionalApp:
     @pytest.fixture(autouse=True)
     def setup(self, mocker, get_clubs, get_competitions):
-        mocker.patch('server.clubs', get_clubs)
-        mocker.patch('server.competitions', get_competitions)
+        mocker.patch('utils.clubs', get_clubs)
+        mocker.patch('utils.competitions', get_competitions)
 
-        mocker.patch('server.save_clubs')
-        mocker.patch('server.save_competitions')
+        mocker.patch('utils.save_clubs')
+        mocker.patch('utils.save_competitions')
 
     def test_signup(self, live_server):
+        """
+        Test that the signup process is correctly done with given details.
+        Args:
+            live_server (threading.Thread): A live server fixture.
+        """
         options = Options()
         options.binary_location = r"C:\Program Files\Mozilla Firefox\firefox.exe"
 
@@ -39,6 +44,12 @@ class TestFunctionalApp:
         browser.quit()
 
     def test_login(self, live_server, get_credentials):
+        """
+        Test that the login process is correctly done with given credentials.
+        Args:
+            live_server (threading.Thread): A live server fixture.
+            get_credentials (dict): The credentials.
+        """
         options = Options()
         options.binary_location = r"C:\Program Files\Mozilla Firefox\firefox.exe"
 

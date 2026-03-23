@@ -7,7 +7,11 @@
             <ul>
                 {% for message in messages %}
                    {% if "Sorry" in message %}
-                        <li style="color: darkred;">❌&nbsp;{{message}}</li>
+                        {% if error %}
+                            <li style="color: darkred;">{{ error }} - ❌&nbsp;{{message}}</li>
+                        {% else %}
+                            <li style="color: darkred;">❌&nbsp;{{message}}</li>
+                        {% endif %}
                    {% else %}
                         <li style="color: darkgreen;">✅&nbsp;{{message}}</li>
                    {% endif %}
@@ -18,19 +22,25 @@
         </div>
         <h2>Welcome, {{club['email']}} </h2>
 
-        <a href="{{ url_for('profile', club=club['name']) }}">Go to profile</a>
+        <a class="book" href="{{ url_for('profile', club=club['name']) }}">Go to profile</a>
         <br><br>
         Points available: {{club['points']}}
         <h3>- Competitions -</h3>
         <ul>
             {% for comp in competitions%}
             <li class="competition">
-                <b>{{comp['name']}}</b><br />
-                Date: {{comp['date']}}</br>
+                <b>{{comp['name']}}</b><br>
+                Date: {{comp['date']}}<br>
                 Number of Places: {{comp['number_of_places']}}<br><br>
-                {%if comp['number_of_places']|int >0%}
-                    <a class="book" href="{{ url_for('book',competition=comp['name'],club=club['name']) }}">Book Places</a>
-                {%endif%}
+                {% if comp.is_past %}
+                    <p class="past">Already happened</p>
+                {% else %}
+                    {%if comp['number_of_places']|int >0%}
+                        <a class="book" href="{{ url_for('book',competition=comp['name'],club=club['name']) }}">Book Places</a>
+                    {% else %}
+                        <p class="full">Sold out</p>
+                    {% endif %}
+                {% endif %}
             </li>
             {% endfor %}
         </ul>

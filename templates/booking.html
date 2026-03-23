@@ -1,6 +1,5 @@
 {% extends 'base.html' %}
 {% block content %}
-
     <h2>{{competition['name']}}</h2>
     Places available: {{competition['number_of_places']}}<br><br>
     <form action="/purchasePlaces" method="post">
@@ -11,5 +10,4 @@
         <button type="submit">Book places</button>
     </form>
     <a class="book" href="{{ url_for("show_summary", club=club['name']) }}">Go back</a>
-
 {% endblock %}

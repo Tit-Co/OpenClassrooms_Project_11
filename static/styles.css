@@ -153,6 +153,7 @@ ul {
     border-radius: 10px;
     gap: 5px;
     display: flex;
+    flex-wrap: wrap;
     flex-direction: row;
     font-size: 14px;
 }
@@ -184,18 +185,37 @@ h6 {
     font-weight: normal;
 }
 
-button, .book {
-    border: 1px solid #72aee6;
+button, .book, .past, .full {
     border-radius: 5px;
-    color: #72aee6;
     font-weight: bold;
     font-size: 16px;
     padding: 5px;
     background-color: #ffffff;
     cursor: pointer;
     margin: 10px auto;
-
 }
+
+button, .book {
+    border: 1px solid #72aee6;
+    color: #72aee6;
+}
+
+.past, .full {
+    cursor: default;
+    display: inline-block;
+    margin: -5px auto;
+}
+
+.past {
+    border: 1px solid grey;
+    color: grey;
+}
+
+.full {
+    border: 1px solid darkorange;
+    color: darkorange;
+}
+
 button:hover, .book:hover {
     box-shadow: 1px 1px 3px #ccc;
 }

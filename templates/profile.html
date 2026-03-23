@@ -4,18 +4,21 @@
         {% with messages = get_flashed_messages()%}
             {% if messages %}
                 <ul>
-               {% for message in messages %}
-                   {% if "Sorry" in message %}
-                        <li style="color: darkred;">❌&nbsp;{{message}}</li>
-                   {% else %}
-                        <li style="color: darkgreen;">✅&nbsp;{{message}}</li>
-                   {% endif %}
-                {% endfor %}
+                   {% for message in messages %}
+                       {% if "Sorry" in message %}
+                            {% if error %}
+                                <li style="color: darkred;">{{ error }} - ❌&nbsp;{{message}}</li>
+                            {% else %}
+                                <li style="color: darkred;">❌&nbsp;{{message}}</li>
+                            {% endif %}
+                       {% else %}
+                            <li style="color: darkgreen;">✅&nbsp;{{message}}</li>
+                       {% endif %}
+                    {% endfor %}
                </ul>
             {% endif%}
         {%endwith%}
     </div>
-
     <h2>Welcome, {{club['email']}} </h2>
     <h3>- Profile -</h3>
     <ul class="profile">
@@ -24,7 +27,5 @@
         <li><a href="{{url_for('change_password', club=club['name'])}}">Change password</a></li>
         <li>Points available: {{club['points']}}</li>
     </ul>
-    <br>
-    <a href="{{url_for('show_summary', club=club['name'])}}">Go to summary</a>
-
+    <a class="book" href="{{url_for('show_summary', club=club['name'])}}">Go to summary</a>
 {% endblock %}
