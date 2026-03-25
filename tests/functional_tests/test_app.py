@@ -1,8 +1,7 @@
+import time
 import pytest
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.firefox.options import Options
-from selenium.webdriver.firefox.service import Service
 
 
 class TestFunctionalApp:
@@ -20,12 +19,7 @@ class TestFunctionalApp:
         Args:
             live_server (threading.Thread): A live server fixture.
         """
-        options = Options()
-        options.binary_location = r"C:\Program Files\Mozilla Firefox\firefox.exe"
-
-        gecko_service = Service(executable_path="tests/functional_tests/geckodriver.exe")
-
-        browser = webdriver.Firefox(service=gecko_service, options=options)
+        browser = webdriver.Chrome()
         browser.get(f"{live_server}/signUp")
 
         name = browser.find_element(By.ID, "name")
@@ -39,6 +33,8 @@ class TestFunctionalApp:
         signup = browser.find_element(By.ID, "signup")
         signup.click()
 
+        time.sleep(1)
+
         assert browser.find_element("tag name", "h2").text == "Welcome, doe@testclub.com"
 
         browser.quit()
@@ -50,12 +46,7 @@ class TestFunctionalApp:
             live_server (threading.Thread): A live server fixture.
             get_credentials (dict): The credentials.
         """
-        options = Options()
-        options.binary_location = r"C:\Program Files\Mozilla Firefox\firefox.exe"
-
-        gecko_service = Service(executable_path="tests/functional_tests/geckodriver.exe")
-
-        browser = webdriver.Firefox(service=gecko_service, options=options)
+        browser = webdriver.Chrome()
         browser.get(f"{live_server}/")
 
         email = browser.find_element(By.ID, "email")
@@ -64,6 +55,8 @@ class TestFunctionalApp:
         password.send_keys(get_credentials["password"])
         login = browser.find_element(By.ID, "login")
         login.click()
+
+        time.sleep(1)
 
         assert browser.find_element("tag name", "h2").text == "Welcome, kate@shelifts.co.uk"
 

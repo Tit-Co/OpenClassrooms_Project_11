@@ -131,15 +131,15 @@ def change_password(club):
 
             the_club = next((c for c in utils.clubs if c['name'] == club), None)
 
-            error_message, error_tag = utils.validate_password(password=club_password,
-                                                               password2=club_password_confirmation,
-                                                               club=the_club)
-
-            if error_message and error_tag:
-                flash(message=error_message)
+            try:
+                utils.validate_password(password=club_password,
+                                        password2=club_password_confirmation,
+                                        club=the_club)
+            except utils.ValidationError as e:
+                flash(e.message)
                 return render_template(template_name_or_list='change_password.html',
                                        club=the_club,
-                                       error=error_tag), 406
+                                       error=e.tag), 200
 
             the_club = utils.update_club_password(the_club, club_password)
 
@@ -213,22 +213,23 @@ def book(competition, club):
         found_club = [c for c in utils.clubs if c['name'] == club][0]
         found_competition = [c for c in utils.competitions if c['name'] == competition][0]
 
-        error_message, error_tag = utils.validate_competition(the_competition=found_competition)
+        try:
+            utils.validate_competition(the_competition=found_competition)
 
-        if error_message and error_tag:
-            flash(message=error_message)
+        except utils.ValidationError as e:
+            flash(message=e.message)
 
             the_club = next((a_club for a_club in utils.clubs if a_club['name'] == club), None)
 
             return render_template(template_name_or_list='welcome.html',
                                    club=the_club,
                                    competitions=utils.competitions,
-                                   error=error_tag), 403
+                                   error=e.tag), 200
 
         if found_club and found_competition:
             return render_template(template_name_or_list='booking.html',
                                    club=found_club,
-                                   competition=found_competition)
+                                   competition=found_competition), 200
         else:
             flash(message="Sorry, something went wrong. Please try again.")
             return render_template(template_name_or_list='welcome.html',
@@ -250,16 +251,17 @@ def purchase_places():
 
     places_required = int(request.form['places']) if request.form['places'] else 0
 
-    error_message, error_tag = utils.validate_places(places_required=places_required,
-                                                     club=club,
-                                                     the_competition=competition)
+    try:
+        utils.validate_places(places_required=places_required,
+                              club=club,
+                              the_competition=competition)
 
-    if error_message and error_tag:
-        flash(message=error_message)
+    except utils.ValidationError as e:
+        flash(message=e.message)
         return render_template(template_name_or_list='welcome.html',
                                club=club,
                                competitions=utils.competitions,
-                               error=error_tag), 403
+                               error=e.tag), 200
 
     utils.update_club_booked_places(club=club,
                                     places=places_required,

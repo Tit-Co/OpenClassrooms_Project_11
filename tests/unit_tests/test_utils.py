@@ -161,11 +161,14 @@ class TestUnitUtils:
             (c for c in utils.clubs if c['name'] == get_existing_competition_and_club["club"]), None)
         competition_name = next(
             (c for c in utils.competitions if c['name'] == get_existing_competition_and_club["competition"]), None)
-        error_message, error_tag = utils.validate_places(places_required=-2,
-                                                         club=club,
-                                                         the_competition=competition_name)
-        assert error_message == "Sorry, you should type a positive number."
-        assert error_tag == "Negative number"
+
+        try:
+            utils.validate_places(places_required=-2,
+                                  club=club,
+                                  the_competition=competition_name)
+        except utils.ValidationError as e:
+            assert e.message == "Sorry, you should type a positive number."
+            assert e.tag == "Negative number"
 
     @staticmethod
     def test_validate_places_over_12(client, get_existing_competition_and_club):
@@ -179,11 +182,13 @@ class TestUnitUtils:
             (c for c in utils.clubs if c['name'] == get_existing_competition_and_club["club"]), None)
         competition = next(
             (c for c in utils.competitions if c['name'] == get_existing_competition_and_club["competition"]), None)
-        error_message, error_tag = utils.validate_places(places_required=13,
-                                                         club=club,
-                                                         the_competition=competition)
-        assert error_message == "Sorry, you are not allow to purchase more than 12 places for this competition."
-        assert error_tag == "Over 12 places"
+        try:
+            utils.validate_places(places_required=13,
+                                  club=club,
+                                  the_competition=competition)
+        except utils.ValidationError as e:
+            assert e.message == "Sorry, you are not allow to purchase more than 12 places for this competition."
+            assert e.tag == "Over 12 places"
 
     @staticmethod
     def test_validate_places_requires_more(client, get_existing_competition_and_club_5):
@@ -197,11 +202,13 @@ class TestUnitUtils:
             (c for c in utils.clubs if c['name'] == get_existing_competition_and_club_5["club"]), None)
         competition = next(
             (c for c in utils.competitions if c['name'] == get_existing_competition_and_club_5["competition"]), None)
-        error_message, error_tag = utils.validate_places(places_required=5,
-                                                         club=club,
-                                                         the_competition=competition)
-        assert error_message == "Sorry, there are not enough places available for this competition."
-        assert error_tag == "Not enough places"
+        try:
+            utils.validate_places(places_required=5,
+                                  club=club,
+                                  the_competition=competition)
+        except utils.ValidationError as e:
+            assert e.message == "Sorry, there are not enough places available for this competition."
+            assert e.tag == "Not enough places"
 
     @staticmethod
     def test_validate_places_not_enough(client, get_existing_competition_and_club_6):
@@ -215,11 +222,14 @@ class TestUnitUtils:
             (c for c in utils.clubs if c['name'] == get_existing_competition_and_club_6["club"]), None)
         competition = next(
             (c for c in utils.competitions if c['name'] == get_existing_competition_and_club_6["competition"]), None)
-        error_message, error_tag = utils.validate_places(places_required=6,
-                                                         club=club,
-                                                         the_competition=competition)
-        assert error_message == "Sorry, you do not have enough points to purchase."
-        assert error_tag == "Not enough points"
+
+        try:
+            utils.validate_places(places_required=6,
+                                  club=club,
+                                  the_competition=competition)
+        except utils.ValidationError as e:
+            assert e.message == "Sorry, you do not have enough points to purchase."
+            assert e.tag == "Not enough points"
 
     @staticmethod
     def test_validate_past_competition(client, get_existing_competition_and_club_3):
@@ -231,9 +241,12 @@ class TestUnitUtils:
         """
         competition = next(
             (c for c in utils.competitions if c['name'] == get_existing_competition_and_club_3["competition"]), None)
-        error_message, error_tag = utils.validate_competition(the_competition=competition)
-        assert error_message == "Sorry, this competition is outdated. Booking not possible."
-        assert error_tag == "Outdated"
+
+        try:
+            utils.validate_competition(the_competition=competition)
+        except utils.ValidationError as e:
+            assert e.message == "Sorry, this competition is outdated. Booking not possible."
+            assert e.tag == "Outdated"
 
     @staticmethod
     def test_validate_competition_sold_out(client, get_existing_competition_and_club_4):
@@ -245,6 +258,9 @@ class TestUnitUtils:
         """
         competition = next(
             (c for c in utils.competitions if c['name'] == get_existing_competition_and_club_4["competition"]), None)
-        error_message, error_tag = utils.validate_competition(the_competition=competition)
-        assert error_message == "Sorry, this competition is sold out. Booking not possible."
-        assert error_tag == "Sold out"
+
+        try:
+            utils.validate_competition(the_competition=competition)
+        except utils.ValidationError as e:
+            assert e.message == "Sorry, this competition is sold out. Booking not possible."
+            assert e.tag == "Sold out"

@@ -6,6 +6,50 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
+
+class ValidationError(Exception):
+    def __init__(self, message, tag):
+        self.message = message
+        self.tag = tag
+        super().__init__(message)
+
+
+class NegativePlacesError(ValidationError):
+    pass
+
+
+class Over12PlacesError(ValidationError):
+    pass
+
+
+class NotEnoughPlacesError(ValidationError):
+    pass
+
+
+class NotEnoughPointsError(ValidationError):
+    pass
+
+
+class OutdatedCompetitionError(ValidationError):
+    pass
+
+
+class CompetitionNullPlacesError(ValidationError):
+    pass
+
+
+class PasswordEmptyFieldError(ValidationError):
+    pass
+
+
+class PasswordsNotMatchError(ValidationError):
+    pass
+
+
+class PasswordNotDifferentError(ValidationError):
+    pass
+
+
 def get_clubs_path() -> str:
     """
     Method that returns the path to the clubs json file
@@ -155,7 +199,7 @@ def check_all_fields_filled_out(name: str, email: str, password: str, password2:
         return False
     return True
 
-def validate_places(places_required: int, club: dict, the_competition: dict) -> tuple[str, str] | None:
+def validate_places(places_required: int, club: dict, the_competition: dict) -> None:
     """
     Method that validates the places required
     Args:
@@ -164,43 +208,45 @@ def validate_places(places_required: int, club: dict, the_competition: dict) -> 
         the_competition (dict): The competition dictionary
 
     Returns:
-        A tuple containing error message and error tag or None
+        None
     """
     booked_places = int(club.get("booked_places", {}).get(the_competition["name"], 0))
 
     cumulative_places = places_required + booked_places
 
-    error_message, error_tag = "", ""
-
     if places_required <= 0:
-        error_message = "Sorry, you should type a positive number."
-        error_tag = "Negative number"
+        raise NegativePlacesError(
+            message = "Sorry, you should type a positive number.",
+            tag = "Negative number"
+        )
 
-    elif cumulative_places > 12:
-        error_message = "Sorry, you are not allow to purchase more than 12 places for this competition."
-        error_tag = "Over 12 places"
+    if cumulative_places > 12:
+        raise Over12PlacesError(
+            message = "Sorry, you are not allow to purchase more than 12 places for this competition.",
+            tag = "Over 12 places"
+        )
 
-    elif places_required > int(the_competition['number_of_places']):
-        error_message = "Sorry, there are not enough places available for this competition."
-        error_tag = "Not enough places"
+    if places_required > int(the_competition['number_of_places']):
+        raise NotEnoughPlacesError(
+            message = "Sorry, there are not enough places available for this competition.",
+            tag = "Not enough places"
+        )
 
-    elif places_required > int(club['points']):
-        error_message = "Sorry, you do not have enough points to purchase."
-        error_tag = "Not enough points"
+    if places_required > int(club['points']):
+        raise NotEnoughPointsError(
+            message = "Sorry, you do not have enough points to purchase.",
+            tag = "Not enough points"
+        )
 
-    return error_message, error_tag
-
-def validate_competition(the_competition: dict) -> tuple[str, str] | None:
+def validate_competition(the_competition: dict) -> None:
     """
     Method that validates the competition
     Args:
         the_competition (dict): The competition dictionary
 
     Returns:
-        A tuple containing error message and error tag or None
+        None
     """
-    error_message, error_tag = "", ""
-
     now = datetime.now()
 
     competition_date = datetime.strptime(the_competition['date'], '%Y-%m-%d %H:%M:%S')
@@ -208,16 +254,18 @@ def validate_competition(the_competition: dict) -> tuple[str, str] | None:
     competition_places = int(the_competition['number_of_places'])
 
     if now > competition_date:
-        error_message = "Sorry, this competition is outdated. Booking not possible."
-        error_tag = "Outdated"
+        raise OutdatedCompetitionError(
+            message = "Sorry, this competition is outdated. Booking not possible.",
+            tag = "Outdated"
+        )
 
-    elif competition_places == 0:
-        error_message = "Sorry, this competition is sold out. Booking not possible."
-        error_tag = "Sold out"
+    if competition_places == 0:
+        raise CompetitionNullPlacesError(
+            message = "Sorry, this competition is sold out. Booking not possible.",
+            tag = "Sold out"
+        )
 
-    return error_message, error_tag
-
-def validate_password(password: str, password2: str, club: dict) -> tuple[str, str]:
+def validate_password(password: str, password2: str, club: dict) -> None:
     """
     Method that validates the password
     Args:
@@ -226,20 +274,22 @@ def validate_password(password: str, password2: str, club: dict) -> tuple[str, s
         club (dict): The club dictionary.
 
     Returns:
-        A tuple containing error message and error tag or None
+        None
     """
-    error_message, error_tag = "", ""
-
     if len(password) == 0 or len(password2) == 0:
-        error_message = "Sorry, please fill all fields."
-        error_tag = "Empty field(s)"
+        raise PasswordEmptyFieldError(
+            message = "Sorry, please fill all fields.",
+            tag = "Empty field(s)"
+        )
 
-    elif password != password2:
-        error_message = "Sorry, passwords do not match."
-        error_tag = "Passwords not match"
+    if password != password2:
+        raise PasswordsNotMatchError(
+            message = "Sorry, passwords do not match.",
+            tag = "Passwords not match"
+        )
 
-    elif check_password_hash(club['password'], password):
-        error_message = "Sorry, you have to type a new different password."
-        error_tag = "Identical password"
-
-    return error_message, error_tag
+    if check_password_hash(club['password'], password):
+        raise PasswordNotDifferentError(
+            message = "Sorry, you have to type a new different password.",
+            tag = "Identical password"
+        )

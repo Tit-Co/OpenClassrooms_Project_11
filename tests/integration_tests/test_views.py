@@ -95,20 +95,22 @@ class TestIntegrationViews:
 
         soup = BeautifulSoup(data, features="html.parser")
         all_li_str = [str(li) for li in soup.find_all('li')]
+        expected_li = "".join(all_li_str)
         the_club_name_utf8 = "%20".join(the_club['name'].split())
         the_competition_name_utf8 = "%20".join(the_competition['name'].split())
-        li = (f'<li class="competition">\n<b>{the_competition["name"]}</b><br/>\n'
-              f'                Date: 2026-07-27 10:00:00<br/>\n                '
-              f'Number of Places: {new_competition_places}<br/><br/>\n'
-              f'<a class="book" href="/book/{the_competition_name_utf8}/'
-              f'{the_club_name_utf8}">Book Places</a>\n</li>')
-        print(li)
+
+        li = f"""<li class="competition">
+        <b>{the_competition["name"]}</b><br/>
+        Date: 2026-07-27 10:00:00<br/>
+        Number of Places: {new_competition_places}<br/><br/>
+        <a class="book" href="/book/{the_competition_name_utf8}/{the_club_name_utf8}">Book Places</a>
+        </li>"""
 
         assert client_response.status_code == 200
         assert (f"Great! Booking of {purchasing_data['places']} place(s) for "
                 f"{purchasing_data['competition']} competition complete!") in data
         assert f"Welcome, {the_club["email"]} " in data
-        assert li in all_li_str
+        assert " ".join(li.split()) in " ".join(expected_li.split())
         assert f"Points available: {new_points}" in data
 
     @staticmethod
@@ -136,7 +138,7 @@ class TestIntegrationViews:
         client_response = client.post('/purchasePlaces', data=get_inconsistent_purchasing_data)
         data = client_response.data.decode('utf-8')
 
-        assert client_response.status_code == 403
+        assert client_response.status_code == 200
         assert "Not enough points" in data
         assert f"Welcome, {the_club["email"]} " in data
         assert "Sorry, you do not have enough points to purchase." in data
@@ -168,7 +170,7 @@ class TestIntegrationViews:
         client_response = client.post('/purchasePlaces', data=purchasing_data)
         data = client_response.data.decode('utf-8')
 
-        assert client_response.status_code == 403
+        assert client_response.status_code == 200
         assert "Over 12 places" in data
         assert f"Welcome, {the_club["email"]} " in data
         assert "Sorry, you are not allow to purchase more than 12 places for this competition." in data
@@ -200,7 +202,7 @@ class TestIntegrationViews:
         client_response = client.post('/purchasePlaces', data=purchasing_data)
         data = client_response.data.decode('utf-8')
 
-        assert client_response.status_code == 403
+        assert client_response.status_code == 200
         assert f"Welcome, {the_club["email"]} " in data
         assert "Over 12 places" in data
         assert "Sorry, you are not allow to purchase more than 12 places for this competition." in data
@@ -232,7 +234,7 @@ class TestIntegrationViews:
         client_response = client.post('/purchasePlaces', data=purchasing_data)
         data = client_response.data.decode('utf-8')
 
-        assert client_response.status_code == 403
+        assert client_response.status_code == 200
         assert "Negative number" in data
         assert f"Welcome, {the_club["email"]} " in data
         assert "Sorry, you should type a positive number." in data
@@ -258,7 +260,7 @@ class TestIntegrationViews:
 
         data = client_response.data.decode('utf-8')
 
-        assert client_response.status_code == 403
+        assert client_response.status_code == 200
         assert "Outdated" in data
         assert "Sorry, this competition is outdated. Booking not possible." in data
 
@@ -288,7 +290,7 @@ class TestIntegrationViews:
         client_response = client.post('/purchasePlaces', data=purchasing_data)
         data = client_response.data.decode('utf-8')
 
-        assert client_response.status_code == 403
+        assert client_response.status_code == 200
         assert "Not enough places" in data
         assert f"Welcome, {the_club["email"]} " in data
         assert "Sorry, there are not enough places available for this competition." in data
@@ -314,7 +316,7 @@ class TestIntegrationViews:
 
         data = client_response.data.decode('utf-8')
 
-        assert client_response.status_code == 403
+        assert client_response.status_code == 200
         assert "Sold out" in data
         assert "Sorry, this competition is sold out. Booking not possible." in data
 
@@ -369,7 +371,7 @@ class TestIntegrationViews:
 
         data = client_response.data.decode('utf-8')
 
-        assert client_response.status_code == 406
+        assert client_response.status_code == 200
         assert "Passwords not match" in data
         assert "Sorry, passwords do not match." in data
 
@@ -397,7 +399,7 @@ class TestIntegrationViews:
 
         data = client_response.data.decode('utf-8')
 
-        assert client_response.status_code == 406
+        assert client_response.status_code == 200
         assert "Identical password" in data
         assert "Sorry, you have to type a new different password." in data
 
@@ -425,6 +427,6 @@ class TestIntegrationViews:
 
         data = client_response.data.decode('utf-8')
 
-        assert client_response.status_code == 406
+        assert client_response.status_code == 200
         assert "Empty field(s)" in data
         assert "Sorry, please fill all fields." in data
