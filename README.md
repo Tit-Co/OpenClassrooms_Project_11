@@ -95,13 +95,20 @@ git clone https://github.com/Tit-Co/OpenClassrooms_Project_11.git
   - With PowerShell :
     ```
     $env:FLASK_APP = "server"
+    ```
+    Plus, in option, the 2 lines below for the good execution of performance tests
+    ```
     $env:CLUBS_JSON="D:\<your-path>\clubs_tmp.json"
     $env:COMPETITIONS_JSON="D:\<your-path>\competitions_tmp.json"
     ```
-  - With Git Bash :
+    
+  - With Git Bash (with the temp JSON env variables) :
     ```
-    export FLASK_APP=server && export CLUBS_JSON="/d/path/clubs_tmp.json" 
-    && export COMPETITIONS_JSON="/d/path/competitions_tmp.json"
+    export FLASK_APP=server
+    ```
+    Plus, in option, the line below for the good execution of performance tests
+    ```
+    export CLUBS_JSON="/d/<your-path>/clubs_tmp.json" && export COMPETITIONS_JSON="/d/<your-path>/competitions_tmp.json"
     ```
 
 - Finally, launch the Django server : `flask run`
@@ -195,6 +202,7 @@ to the validation or rejection of the entry.
 </p>
 
 ---
+
 ## PEP 8 CONVENTIONS
 
 - Flake 8 report
@@ -204,13 +212,14 @@ to the validation or rejection of the entry.
 
 **Type the line below in the terminal to generate another report with [flake8-html](https://pypi.org/project/flake8-html/) tool :**
 
-` flake8 --format=html --htmldir=flake8-report --max-line-length=119 --extend-exclude=env/, cov_html/`
+` flake8 --format=html --htmldir=flake8-report --max-line-length=119 --extend-exclude=env/, cov_html/ --ignore=E402`
+(E402 error ignored because we need to import some libraries after some variables' declaration and assignation in tests)
 
 ---
 
 ## TESTS COVERAGE WITH PYTEST
 
-Cov report
+- Coverage report
 <p align="center">
     <img src="docs/cov_report.png" width="auto" style="border: 1px solid grey; border-radius: 10px;">
     <img src="docs/cov_report_functions.png" width="auto" style="border: 1px solid grey; border-radius: 10px;">
@@ -224,15 +233,15 @@ Cov report
 
 ## PERFORMANCE TESTS WITH LOCUST
 
-Locust report
+- Locust report example
 <p align="center">
     <img src="docs/locust_report.png" width="auto" style="border: 1px solid grey; border-radius: 10px;">
 </p>
 
-- **Launch the application as described previously**
-
-- **Open another terminal, activate the virtual env, go into the locust test folder, 
-and type the `locust` command to launch the performance tests**
+- **Launch the application as described previously (and do not forget the environment variables for temp JSON files)**
+    
+- **Open another terminal, activate the virtual environment, go into the locust test folder, 
+      and type the `locust` command to launch the performance tests**
 
 ---
 

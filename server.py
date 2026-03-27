@@ -1,8 +1,8 @@
 import os
-import re
 
 from flask import Flask, render_template, request, redirect, flash, url_for, session
 from werkzeug.security import generate_password_hash, check_password_hash
+
 
 app = Flask(__name__)
 app.secret_key = 'something_special'
@@ -17,6 +17,7 @@ import utils
 utils.clubs = utils.load_clubs()
 utils.competitions = utils.load_competitions()
 
+
 @app.route('/')
 def index():
     """
@@ -26,6 +27,7 @@ def index():
     """
     return render_template(template_name_or_list='index.html')
 
+
 @app.route('/signUp')
 def sign_up():
     """
@@ -34,6 +36,7 @@ def sign_up():
         The template for sign up page
     """
     return render_template(template_name_or_list='sign_up.html')
+
 
 @app.route('/profile/<club>', methods=['GET'])
 def profile(club):
@@ -57,6 +60,7 @@ def profile(club):
     flash(message="Sorry, you are not allow to see that profile.")
     return render_template(template_name_or_list='index.html', error="Not allow"), 403
 
+
 @app.route('/profile', methods=['POST'])
 def profile_post():
     """
@@ -69,19 +73,22 @@ def profile_post():
     club_password = request.form['password']
     club_password_confirmation = request.form['confirm_password']
 
-    error_message = ""
-    if not utils.check_all_fields_filled_out(club_name, club_email, club_password, club_password):
-        error_message = "Sorry, please fill all fields"
+    try:
+        utils.validate_profile_fields(club_name, club_email, club_password, club_password_confirmation)
 
-    elif not re.match(r'\b[A-Za-z0-9._+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b', club_email):
-        error_message = "Sorry, the e-mail address you entered has invalid format."
-
-    if error_message:
-        flash(message=error_message)
+    except utils.ValidationError as e:
+        flash(message=e.message)
         return redirect(location=url_for('sign_up'))
 
-    club_exists = next((c for c in utils.clubs if c['email'] == club_email or c['name'] == club_name), None)
-    if club_exists is None:
+    try:
+        utils.validate_email_format(club_email)
+
+    except utils.ValidationError as e:
+        flash(message=e.message)
+        return redirect(location=url_for('sign_up'))
+
+    existing_club = next((c for c in utils.clubs if c['email'] == club_email or c['name'] == club_name), None)
+    if existing_club is None:
         if club_password != club_password_confirmation:
             flash(message='Sorry, passwords do not match')
             return redirect(location=url_for('sign_up'))
@@ -105,6 +112,7 @@ def profile_post():
     else:
         flash(message="Sorry, the club already exists.")
         return render_template(template_name_or_list='sign_up.html')
+
 
 @app.route('/changePassword/<club>', methods=['GET', 'POST'])
 def change_password(club):
@@ -174,6 +182,7 @@ def show_summary(club):
     flash(message="Sorry, you are not allow to do this action.")
     return render_template(template_name_or_list='index.html', error="Not allow"), 403
 
+
 @app.route('/showSummary', methods=['POST'])
 def show_summary_post():
     """
@@ -181,6 +190,12 @@ def show_summary_post():
     Returns:
         The welcome template if success. The index template otherwise.
     """
+    try:
+        utils.validate_login_fields(request.form['email'], request.form['password'])
+    except utils.ValidationError as e:
+        flash(message=e.message)
+        return render_template(template_name_or_list="index.html", error=e.tag), 404
+
     the_club = next((c for c in utils.clubs if c['email'] == request.form['email']), None)
 
     if the_club is None:
@@ -197,6 +212,7 @@ def show_summary_post():
     return render_template(template_name_or_list='welcome.html',
                            club=the_club,
                            competitions=utils.competitions)
+
 
 @app.route('/book/<competition>/<club>')
 def book(competition, club):
@@ -239,6 +255,7 @@ def book(competition, club):
     flash(message="Sorry, you are not allow to do this action.")
     return render_template(template_name_or_list='index.html', error="Not allow"), 403
 
+
 @app.route('/purchasePlaces', methods=['POST'])
 def purchase_places():
     """
@@ -275,6 +292,8 @@ def purchase_places():
     return render_template(template_name_or_list='welcome.html',
                            club=club,
                            competitions=utils.competitions)
+
+
 @app.route('/pointsBoard')
 def points_board():
     """
@@ -282,10 +301,10 @@ def points_board():
     Returns:
         The points board template.
     """
-    clubs_for_board=[]
+    clubs_for_board = []
     for club in utils.clubs:
         club_copy = club.copy()
-        if utils.clubs.index(club) %2 == 0:
+        if utils.clubs.index(club) % 2 == 0:
             club_copy["color"] = "#cccccc"
         else:
             club_copy["color"] = "#aaaaaa"
@@ -296,6 +315,7 @@ def points_board():
     return render_template(template_name_or_list='points_board.html',
                            clubs=clubs_for_board,
                            club=club)
+
 
 @app.route('/logout')
 def logout():

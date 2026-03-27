@@ -1,6 +1,5 @@
+import time
 import pytest
-from werkzeug.security import check_password_hash
-
 import utils
 
 from flask import url_for
@@ -34,7 +33,7 @@ class TestUnitViews:
         client_response = client.get('/')
         data = client_response.data.decode('utf-8')
 
-        assert "Welcome to the GUDLFT Portal!" in data
+        assert "Welcome to the GÜDLFT Portal!" in data
         assert ('Please enter your secretary email and your password to continue '
                 'or <a href="/signUp">sign up</a>') in data
         assert "Email:" in data
@@ -55,7 +54,7 @@ class TestUnitViews:
         assert "Not allow" in client_response.data.decode('utf-8')
 
     @staticmethod
-    def test_index_mail_authentication_ok(get_credentials, client):
+    def test_index_mail_authentication_ok(client, get_credentials):
         """
         Test that the summary page is returned with a 200 status code in case of fine
         authentication
@@ -65,6 +64,20 @@ class TestUnitViews:
         """
         client_response = client.post('/showSummary', data=get_credentials)
         assert client_response.status_code == 200
+
+    @staticmethod
+    def test_index_mail_authentication_fails(client, get_bad_credentials):
+        """
+        Test that the summary page is returned with a 200 status code in case of fine
+        authentication
+        Args:
+            get_credentials (dict): The credentials
+            client (FlaskClient): A Flask client
+        """
+        client_response = client.post('/showSummary', data=get_bad_credentials)
+        data = client_response.data.decode('utf-8')
+        assert client_response.status_code == 403
+        assert "Sorry, the password is incorrect." in data
 
     @staticmethod
     def test_index_mail_authentication_returns_summary(client, get_credentials):
@@ -84,7 +97,7 @@ class TestUnitViews:
         assert "Points available: 12" in data
 
     @staticmethod
-    def test_index_mail_authentication_fail(client, get_unexisting_credentials):
+    def test_index_mail_authentication_not_found(client, get_unexisting_credentials):
         """
         Test that the index page is returned with an error message and with 302 status code in case
          of authentication with unknown mail.
@@ -129,7 +142,7 @@ class TestUnitViews:
         assert client_response.status_code == 200
 
     @staticmethod
-    def test_signup_status_code_ok(client):
+    def test_get_signup_status_code_ok(client):
         """
         Test that the 200 status code is returned in case of signup.
         Args:
@@ -139,7 +152,7 @@ class TestUnitViews:
         assert client_response.status_code == 200
 
     @staticmethod
-    def test_signup_returns_welcome(client):
+    def test_get_signup_returns_welcome(client):
         """
         Test that the profile page is returned with appropriate information from the club when
         signing up
@@ -148,7 +161,7 @@ class TestUnitViews:
         """
         client_response = client.get('/signUp')
         data = client_response.data.decode('utf-8')
-        assert "Welcome to the GUDLFT Portal!" in data
+        assert "Welcome to the GÜDLFT Portal!" in data
         assert "Registration" in data
         assert ("Club name:" in data)
         assert ("Email:" in data)
@@ -224,5 +237,37 @@ class TestUnitViews:
         client_response = client.get('/pointsBoard')
         data = client_response.data.decode('utf-8')
         assert client_response.status_code == 200
-        assert "Welcome to the GUDLFT Portal!" in data
+        assert "Welcome to the GÜDLFT Portal!" in data
         assert "⯈ Here is the board for all the clubs and their points." in data
+
+    @staticmethod
+    def test_post_signup_status_code_ok(client, get_details_2):
+        client_response = client.post('/profile', data=get_details_2, follow_redirects=True)
+
+        assert client_response.status_code == 200
+
+    @staticmethod
+    def test_post_signup_returns_welcome(client, get_details_2):
+        client_response = client.post('/profile', data=get_details_2, follow_redirects=True)
+
+        data = client_response.data.decode('utf-8')
+
+        assert "Welcome, admin@test.com" in data
+        assert "Profile" in data
+        assert "Name : Name Test" in data
+        assert "Email : admin@test.com" in data
+        assert "Points available: 15" in data
+
+    @staticmethod
+    def test_post_signup_fails(client, get_wrong_details_2):
+        client_response = client.post('/profile', data=get_wrong_details_2, follow_redirects=True)
+
+        data = client_response.data.decode('utf-8')
+
+        assert "Sorry, please fill all fields." in data
+        assert "Welcome to the GÜDLFT Portal!" in data
+        assert "Registration" in data
+        assert ("Club name:" in data)
+        assert ("Email:" in data)
+        assert ("Password:" in data)
+        assert ("Confirm Password:" in data)

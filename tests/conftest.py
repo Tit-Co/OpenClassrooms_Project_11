@@ -6,11 +6,13 @@ from random import randint
 from werkzeug.security import generate_password_hash
 from server import app
 
+
 @pytest.fixture
 def client():
     my_app = app
     with my_app.test_client() as client:
         yield client
+
 
 @pytest.fixture
 def get_clubs():
@@ -20,34 +22,36 @@ def get_clubs():
         The list of fictive clubs
     """
     the_clubs = [
-    {
-        "name":"Simply Lift",
-        "email":"john@simplylift.co",
-        "password": generate_password_hash("tp1_Tmn28"),
-        "points":"13"
-    },
-    {
-        "name":"Iron Temple",
-        "email": "admin@irontemple.com",
-        "password": generate_password_hash("tp2_Tmn29"),
-        "points":"4"
-    },
-    {   "name":"She Lifts",
-        "email": "kate@shelifts.co.uk",
-        "password": generate_password_hash("tp3_Tmn30"),
-        "points":"12",
-        "booked_places": {
-                            "Spring Festival": "7"
-                        }
-    },
-    {
-        "name": "Power Lift",
-        "email": "admin@powerlift.com",
-        "password": generate_password_hash("tp4_Tmn40"),
-        "points": "5"
-    }
+        {
+            "name": "Simply Lift",
+            "email": "john@simplylift.co",
+            "password": generate_password_hash("tp1_Tmn28"),
+            "points": "13"
+        },
+        {
+            "name": "Iron Temple",
+            "email": "admin@irontemple.com",
+            "password": generate_password_hash("tp2_Tmn29"),
+            "points": "4"
+        },
+        {
+            "name": "She Lifts",
+            "email": "kate@shelifts.co.uk",
+            "password": generate_password_hash("tp3_Tmn30"),
+            "points": "12",
+            "booked_places": {
+                "Spring Festival": "7"
+            }
+        },
+        {
+            "name": "Power Lift",
+            "email": "admin@powerlift.com",
+            "password": generate_password_hash("tp4_Tmn40"),
+            "points": "5"
+        }
     ]
     return the_clubs
+
 
 @pytest.fixture
 def get_competitions():
@@ -80,20 +84,30 @@ def get_competitions():
     ]
     return the_competitions
 
+
 @pytest.fixture
 def get_credentials():
     data = {"email": "kate@shelifts.co.uk", "password": "tp3_Tmn30"}
     return data
+
+
+@pytest.fixture
+def get_bad_credentials():
+    data = {"email": "kate@shelifts.co.uk", "password": "tp4_Tmn30"}
+    return data
+
 
 @pytest.fixture
 def get_credentials_2():
     data = {"email": "admin@irontemple.com", "password": "tp2_Tmn29"}
     return data
 
+
 @pytest.fixture
 def get_credentials_3():
     data = {"email": "admin@powerlift.com", "password": "tp4_Tmn40"}
     return data
+
 
 @pytest.fixture
 def get_details():
@@ -103,6 +117,16 @@ def get_details():
             "password2": "tp4_Tmn40"}
     return data
 
+
+@pytest.fixture
+def get_details_2():
+    data = {"name": "Name Test",
+            "email": "admin@test.com",
+            "password": "tp4_Tmn40",
+            "confirm_password": "tp4_Tmn40"}
+    return data
+
+
 @pytest.fixture
 def get_wrong_details():
     data = {"name": "",
@@ -111,40 +135,57 @@ def get_wrong_details():
             "password2": "tp4_Tmn40"}
     return data
 
+
+@pytest.fixture
+def get_wrong_details_2():
+    data = {"name": "",
+            "email": "admin@test.com",
+            "password": "",
+            "confirm_password": "tp4_Tmn40"}
+    return data
+
+
 @pytest.fixture
 def get_unexisting_credentials():
     data = {"email": "nicolas.marie@unexisting.com", "password": "er45_shet"}
     return data
+
 
 @pytest.fixture
 def get_existing_competition_and_club():
     data = {"competition": "Spring Festival", "club": "She Lifts"}
     return data
 
+
 @pytest.fixture
 def get_existing_competition_and_club_2():
     data = {"competition": "Spring Festival", "club": "Iron Temple"}
     return data
+
 
 @pytest.fixture
 def get_existing_competition_and_club_3():
     data = {"competition": "Fall Classic", "club": "Iron Temple"}
     return data
 
+
 @pytest.fixture
 def get_existing_competition_and_club_4():
     data = {"competition": "Summer Stronger", "club": "Power Lift"}
     return data
+
 
 @pytest.fixture
 def get_existing_competition_and_club_5():
     data = {"competition": "Winter Power", "club": "Power Lift"}
     return data
 
+
 @pytest.fixture
 def get_existing_competition_and_club_6():
     data = {"competition": "Spring Festival", "club": "Power Lift"}
     return data
+
 
 @pytest.fixture
 def get_consistent_purchasing_data():
@@ -154,6 +195,7 @@ def get_consistent_purchasing_data():
     data = {"competition": competition, "club": club_name, "places": str(places_to_book)}
 
     return data
+
 
 @pytest.fixture
 def get_new_club():
@@ -165,15 +207,17 @@ def get_new_club():
     }
     return club
 
+
 @pytest.fixture
 def get_inconsistent_purchasing_data():
     competition = "Spring Festival"
     club_name = "Iron Temple"
     club_points = 4
-    places_to_book = randint(club_points+1, 12)
+    places_to_book = randint(club_points + 1, 12)
     data = {"competition": competition, "club": club_name, "places": str(places_to_book)}
 
     return data
+
 
 @pytest.fixture
 def purchasing_over_12_places():
@@ -184,6 +228,7 @@ def purchasing_over_12_places():
 
     return data
 
+
 @pytest.fixture
 def purchasing_13_cumulative_places():
     competition = "Spring Festival"
@@ -192,6 +237,7 @@ def purchasing_13_cumulative_places():
     data = {"competition": competition, "club": club_name, "places": str(places_to_book)}
 
     return data
+
 
 @pytest.fixture
 def purchasing_with_negative_places():
@@ -202,6 +248,7 @@ def purchasing_with_negative_places():
 
     return data
 
+
 @pytest.fixture
 def purchasing_places_more_than_available():
     competition = "Winter Power"
@@ -210,6 +257,7 @@ def purchasing_places_more_than_available():
     data = {"competition": competition, "club": club_name, "places": str(places_to_book)}
 
     return data
+
 
 @pytest.fixture(scope="module")
 def live_server():

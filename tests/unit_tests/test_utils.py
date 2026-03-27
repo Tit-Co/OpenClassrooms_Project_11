@@ -12,7 +12,6 @@ class TestUnitUtils:
         mocker.patch('utils.save_clubs')
         mocker.patch('utils.save_competitions')
 
-
     @staticmethod
     def test_update_password_ok(get_credentials):
         """
@@ -112,7 +111,7 @@ class TestUnitUtils:
         assert not competition['number_of_places'] == str(places_available - 4)
 
     @staticmethod
-    def test_form_filled_out_ok(get_details):
+    def test_signup_form_filled_out_ok(get_details):
         """
         Test that the form is filled out correctly.
         Args:
@@ -123,15 +122,15 @@ class TestUnitUtils:
         password = get_details['password']
         password2 = get_details['password2']
 
-        response = utils.check_all_fields_filled_out(name=name,
-                                                     email=email,
-                                                     password=password,
-                                                     password2=password2)
+        response = utils.check_signup_all_fields_filled_out(name=name,
+                                                            email=email,
+                                                            password=password,
+                                                            password2=password2)
 
         assert response
 
     @staticmethod
-    def test_form_filled_out_fails(get_wrong_details):
+    def test_signup_form_filled_out_fails(get_wrong_details):
         """
         Test that the form is filled out wrongly.
         Args:
@@ -142,10 +141,40 @@ class TestUnitUtils:
         password = get_wrong_details['password']
         password2 = get_wrong_details['password2']
 
-        response = utils.check_all_fields_filled_out(name=name,
-                                                     email=email,
-                                                     password=password,
-                                                     password2=password2)
+        response = utils.check_signup_all_fields_filled_out(name=name,
+                                                            email=email,
+                                                            password=password,
+                                                            password2=password2)
+
+        assert not response
+
+    @staticmethod
+    def test_login_form_filled_out_ok(get_details):
+        """
+        Test that the form is filled out correctly.
+        Args:
+            get_details (dict): The details
+        """
+        name = get_details['name']
+        password = get_details['password']
+
+        response = utils.check_login_all_fields_filled_out(name=name,
+                                                           password=password,)
+
+        assert response
+
+    @staticmethod
+    def test_login_form_filled_out_fails(get_wrong_details):
+        """
+        Test that the form is filled out wrongly.
+        Args:
+            get_wrong_details (dict): The details
+        """
+        name = get_wrong_details['name']
+        password = get_wrong_details['password']
+
+        response = utils.check_login_all_fields_filled_out(name=name,
+                                                           password=password)
 
         assert not response
 
@@ -264,3 +293,44 @@ class TestUnitUtils:
         except utils.ValidationError as e:
             assert e.message == "Sorry, this competition is sold out. Booking not possible."
             assert e.tag == "Sold out"
+
+    @staticmethod
+    def test_validate_profile_fields_fails(client, get_wrong_details):
+        try:
+            utils.validate_profile_fields(get_wrong_details["name"],
+                                          get_wrong_details["email"],
+                                          get_wrong_details["password"],
+                                          get_wrong_details["password2"])
+
+        except utils.ValidationError as e:
+
+            assert e.message == "Sorry, please fill all fields."
+            assert e.tag == "Empty field(s)"
+
+    @staticmethod
+    def test_validate_login_fields_fails(client, get_wrong_details):
+        try:
+            utils.validate_login_fields(get_wrong_details["email"], get_wrong_details["password"])
+        except utils.ValidationError as e:
+
+            assert e.message == "Sorry, please fill all fields."
+            assert e.tag == "Empty field(s)"
+
+    @staticmethod
+    def test_validate_email_format_ok(client, get_details):
+        try:
+            utils.validate_email_format(get_details["email"])
+            assert True
+
+        except utils.ValidationError as e:
+            assert e.message == "Sorry, the e-mail address you entered has invalid format."
+            assert e.tag == "Invalid email format"
+
+    @staticmethod
+    def test_validate_email_format_fails(client, get_wrong_details):
+        try:
+            utils.validate_email_format(get_wrong_details["email"])
+
+        except utils.ValidationError as e:
+            assert e.message == "Sorry, the e-mail address you entered has invalid format."
+            assert e.tag == "Invalid email format"

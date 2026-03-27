@@ -19,99 +19,82 @@
             "points": "15"
         },
         {
+            "name": "Heavy Hitters",
+            "email": "admin@heavyhitters.net",
+            "password": "scrypt:32768:8:1$U4IUVIbiypkLsiwd$b57afe44db3af13b7e9772560a228c1100f41c3222b0cbbaa5c8855632fbca004c7d2ca36d7bef52624ee028373a0cd90df65fb9b73d4eb119ad1edf3a741bf9",
+            "points": "15"
+        },
+        {
+            "name": "Power Lifts Club",
+            "email": "admin@powerlifts.com",
+            "password": "scrypt:32768:8:1$zdBGCvw6xXxHzAGl$c4534f2b7b2089aeca6f50bf3221f86f885aa4139692844149becf3c56b37a3c8f6a5f7c47e8c4f60405d591f58cf8f9567d1e383396a5f4de87073d441e5fe3",
+            "points": "15"
+        },
+        {
             "name": "Iron Temple",
             "email": "admin@irontemple.com",
             "password": "scrypt:32768:8:1$rHMWqkkiOSz7QiYU$e1a798fc6d464425359fb999db786ffbe39f6059e195d6d22a15e3ed70be3b5630e1d828399ca241f9d94e109ee5b350067f14a8054079344f01495c73594021",
             "points": "4"
         },
         {
-            "name": "Barbell Warriors",
-            "email": "info@barbellwarriors.com",
-            "password": "scrypt:32768:8:1$ZmtTQFYQVRwhl8cK$d4abb1c57ba950bb082a6c963605af00a0e120f7b6d7346d2a9419efad6d7d5a78c7d15a32b57d4fc2eab10aa864977be0a3734c24f69bc6694cd9b224b57545",
+            "name": "Olympic Lifters",
+            "email": "contact@olympiclifters.com",
+            "password": "scrypt:32768:8:1$CO1XjG2GYak7bGad$906886f7afc2f66ac120f12b263e195fd44283a3cf0a39f963722ca25fc62e0909629165ff184ab67e43dfb44b4ca87ec7448ce95bcd896af2d2c32a31ffa604",
             "points": "15"
-        },
-        {
-            "name": "She Lifts",
-            "email": "kate@shelifts.co.uk",
-            "password": "scrypt:32768:8:1$E4fcXT3MQ7oVfc0w$cf31c4a6aec02d4532ffcae03670b12f20265036a3ae5ee941fae6d135ca2db5e406fe9e6c6eded7776e0c256f6d8970f2cbfb74ee50a1c7f9b49b1ad6819b40",
-            "points": "12"
-        },
-        {
-            "name": "Test Club",
-            "email": "doe@testclub.com",
-            "password": "scrypt:32768:8:1$vFBUhjv8CQBzjTH4$7606d68aeaf0357930a8120d4269f1830d2b3129550c80eda6394ad37b456ee282339f4c258516e97d55137a9d41ea240bdb8ab399643bd709d7d4cddf3eea6f",
-            "points": "15"
-        },
-        {
-            "name": "The Weightroom",
-            "email": "team@weightroom.com",
-            "password": "scrypt:32768:8:1$38I8jEaWVYS5jgcA$0b29c9aa0e7f52b2634516d46b312ba429d2748fd4d72973f83275d4ada39907a6bae0389d31a868acdd4b5b43363515186f86e5f7419f9253d092c94d2a9185",
-            "points": "13",
-            "booked_places": {
-                "Powerlifting Open": "2"
-            }
         },
         {
             "name": "Iron Titans",
             "email": "contact@irontitans.com",
             "password": "scrypt:32768:8:1$kRW7krsT6zGr4iLk$6a24553114aa57f8cf4297786bf6136fa1d6f5f9832c6157fb406eb4459fcde2a82ed2a64d890ebe5e9a6efe73376239c59a124c77b6bd79b371c84095496b78",
-            "points": "0",
-            "booked_places": {
-                "Powerlifting Open": "4",
-                "Winter Power": "1",
-                "Regional Strength": "7",
-                "Spring Festival": "2",
-                "Heavyweight First": "1"
-            }
+            "points": "15"
         },
         {
-            "name": "Heavy Hitters",
-            "email": "admin@heavyhitters.net",
-            "password": "scrypt:32768:8:1$U4IUVIbiypkLsiwd$b57afe44db3af13b7e9772560a228c1100f41c3222b0cbbaa5c8855632fbca004c7d2ca36d7bef52624ee028373a0cd90df65fb9b73d4eb119ad1edf3a741bf9",
+            "name": "Barbell Warriors",
+            "email": "info@barbellwarriors.com",
+            "password": "scrypt:32768:8:1$ZmtTQFYQVRwhl8cK$d4abb1c57ba950bb082a6c963605af00a0e120f7b6d7346d2a9419efad6d7d5a78c7d15a32b57d4fc2eab10aa864977be0a3734c24f69bc6694cd9b224b57545",
             "points": "0",
             "booked_places": {
-                "Spring Festival": "2",
-                "Regional Strength": "5",
-                "Powerlifting Open": "3",
-                "Winter Power": "1",
-                "Heavyweight First": "4"
+                "Heavyweight First": "4",
+                "Powerlifting Open": "4",
+                "Spring Festival": "5",
+                "Regional Strength": "2"
             }
         },
         {
             "name": "Simply Lift",
             "email": "john@simplylift.co",
             "password": "scrypt:32768:8:1$cYYbKbko75gPN3N3$4883a2360abf24fcc9f8329aedfca168994222748933eff4d89c78e5764f0972fce4c478b5737ece1bd31a3d2a0f1a00586096ffbddb79809b9685eabc5e5f4e",
-            "points": "5",
+            "points": "0",
             "booked_places": {
-                "Powerlifting Open": "1",
-                "Regional Strength": "2",
-                "Winter Power": "1",
-                "Heavyweight First": "1",
-                "Spring Festival": "3"
-            }
-        },
-        {
-            "name": "Olympic Lifters",
-            "email": "contact@olympiclifters.com",
-            "password": "scrypt:32768:8:1$CO1XjG2GYak7bGad$906886f7afc2f66ac120f12b263e195fd44283a3cf0a39f963722ca25fc62e0909629165ff184ab67e43dfb44b4ca87ec7448ce95bcd896af2d2c32a31ffa604",
-            "points": "7",
-            "booked_places": {
-                "Spring Festival": "1",
-                "Heavyweight First": "1",
-                "Winter Power": "1",
-                "Powerlifting Open": "4",
-                "Regional Strength": "1"
-            }
-        },
-        {
-            "name": "Power Lifts Club",
-            "email": "admin@powerlifts.com",
-            "password": "scrypt:32768:8:1$zdBGCvw6xXxHzAGl$c4534f2b7b2089aeca6f50bf3221f86f885aa4139692844149becf3c56b37a3c8f6a5f7c47e8c4f60405d591f58cf8f9567d1e383396a5f4de87073d441e5fe3",
-            "points": "5",
-            "booked_places": {
-                "Powerlifting Open": "3",
+                "Heavyweight First": "2",
                 "Spring Festival": "4",
-                "Regional Strength": "3"
+                "Regional Strength": "6",
+                "Powerlifting Open": "1"
+            }
+        },
+        {
+            "name": "She Lifts",
+            "email": "kate@shelifts.co.uk",
+            "password": "scrypt:32768:8:1$E4fcXT3MQ7oVfc0w$cf31c4a6aec02d4532ffcae03670b12f20265036a3ae5ee941fae6d135ca2db5e406fe9e6c6eded7776e0c256f6d8970f2cbfb74ee50a1c7f9b49b1ad6819b40",
+            "points": "0",
+            "booked_places": {
+                "Powerlifting Open": "4",
+                "Spring Festival": "3",
+                "Winter Power": "2",
+                "Regional Strength": "2",
+                "Heavyweight First": "1"
+            }
+        },
+        {
+            "name": "The Weightroom",
+            "email": "team@weightroom.com",
+            "password": "scrypt:32768:8:1$38I8jEaWVYS5jgcA$0b29c9aa0e7f52b2634516d46b312ba429d2748fd4d72973f83275d4ada39907a6bae0389d31a868acdd4b5b43363515186f86e5f7419f9253d092c94d2a9185",
+            "points": "4",
+            "booked_places": {
+                "Regional Strength": "6",
+                "Winter Power": "2",
+                "Powerlifting Open": "2",
+                "Heavyweight First": "1"
             }
         }
     ]

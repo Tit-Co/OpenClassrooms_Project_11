@@ -33,7 +33,7 @@ class TestIntegrationViews:
         assert redirect_response.status_code == 200
         data = redirect_response.data.decode('utf-8')
 
-        assert "Welcome to the GUDLFT Portal!" in data
+        assert "Welcome to the GÜDLFT Portal!" in data
         assert "Authentication" in data
         assert ('Please enter your secretary email and your password to continue '
                 'or <a href="/signUp">sign up</a>') in data
@@ -54,8 +54,8 @@ class TestIntegrationViews:
         client.post('/showSummary', data=get_credentials)
 
         client_response = client.get(url_for(endpoint='book',
-                                      competition=get_existing_competition_and_club['competition'],
-                                      club=get_existing_competition_and_club['club']))
+                                             competition=get_existing_competition_and_club['competition'],
+                                             club=get_existing_competition_and_club['club']))
         data = client_response.data.decode('utf-8')
         assert "Spring Festival" in data
         assert "Places available: " in data
@@ -77,8 +77,8 @@ class TestIntegrationViews:
 
         purchasing_data = get_consistent_purchasing_data
         the_club = [club for club in utils.clubs if club["name"] == purchasing_data['club']][0]
-        the_competition =[competition for competition in utils.competitions
-                          if competition["name"] == purchasing_data['competition']][0]
+        the_competition = [competition for competition in utils.competitions
+                           if competition["name"] == purchasing_data['competition']][0]
 
         client.get(url_for(endpoint='book',
                            competition=the_competition['name'],
@@ -94,12 +94,11 @@ class TestIntegrationViews:
         new_competition_places = int(competition_places) - int(purchasing_data['places'])
 
         soup = BeautifulSoup(data, features="html.parser")
-        all_li_str = [str(li) for li in soup.find_all('li')]
-        expected_li = "".join(all_li_str)
+        all_li = "".join([str(li) for li in soup.find_all('li')])
         the_club_name_utf8 = "%20".join(the_club['name'].split())
         the_competition_name_utf8 = "%20".join(the_competition['name'].split())
 
-        li = f"""<li class="competition">
+        expected_li = f"""<li class="competition">
         <b>{the_competition["name"]}</b><br/>
         Date: 2026-07-27 10:00:00<br/>
         Number of Places: {new_competition_places}<br/><br/>
@@ -107,10 +106,13 @@ class TestIntegrationViews:
         </li>"""
 
         assert client_response.status_code == 200
-        assert (f"Great! Booking of {purchasing_data['places']} place(s) for "
-                f"{purchasing_data['competition']} competition complete!") in data
+        assert (
+            f"Great! Booking of {purchasing_data['places']} place(s) for "
+            f"{purchasing_data['competition']} competition complete!"
+        ) in data
+
         assert f"Welcome, {the_club["email"]} " in data
-        assert " ".join(li.split()) in " ".join(expected_li.split())
+        assert "".join(expected_li.split()) in "".join(all_li.split())
         assert f"Points available: {new_points}" in data
 
     @staticmethod
@@ -119,7 +121,7 @@ class TestIntegrationViews:
                                                                get_existing_competition_and_club_2,
                                                                get_inconsistent_purchasing_data):
         """
-        Test that the 403 status code and an error message are returned in case of not enough
+        Test that the 200 status code and an appropriate message are returned in case of not enough
         points while purchasing.
         Args:
             client (FlaskClient): A Flask client
@@ -149,7 +151,7 @@ class TestIntegrationViews:
                                                             get_credentials,
                                                             purchasing_over_12_places):
         """
-        Test that the 403 status code and an error message are returned in case of purchasing more
+        Test that the 200 status code and an appropriate message are returned in case of purchasing more
         than 12 places.
         Args:
             client (FlaskClient): A Flask client
@@ -181,7 +183,7 @@ class TestIntegrationViews:
                                                                        get_credentials,
                                                                        purchasing_13_cumulative_places):
         """
-        Test that the 403 status code and an error message are returned in case of purchasing more
+        Test that the 200 status code and an appropriate message are returned in case of purchasing more
         than 12 cumulative places.
         Args:
             client (FlaskClient): A Flask client
@@ -213,7 +215,7 @@ class TestIntegrationViews:
                                                              get_credentials,
                                                              purchasing_with_negative_places):
         """
-        Test that the 403 status code and an error message are returned in case of purchasing with
+        Test that the 200 status code and an appropriate message are returned in case of purchasing with
         negative value of places.
         Args:
             client (FlaskClient): A Flask client
@@ -245,7 +247,7 @@ class TestIntegrationViews:
                                                                get_credentials_2,
                                                                get_existing_competition_and_club_3):
         """
-        Test that the 403 status code and an error message are returned in case of outdated
+        Test that the 200 status code and an appropriate message are returned in case of outdated
         competition.
         Args:
             client (FlaskClient): A Flask client
@@ -255,8 +257,8 @@ class TestIntegrationViews:
         client.post('/showSummary', data=get_credentials_2)
 
         client_response = client.get(url_for(endpoint='book',
-                           competition=get_existing_competition_and_club_3['competition'],
-                           club=get_existing_competition_and_club_3['club']))
+                                             competition=get_existing_competition_and_club_3['competition'],
+                                             club=get_existing_competition_and_club_3['club']))
 
         data = client_response.data.decode('utf-8')
 
@@ -269,7 +271,7 @@ class TestIntegrationViews:
                                                             get_credentials,
                                                             purchasing_places_more_than_available):
         """
-        Test that the 403 status code and an error message are returned in case of purchasing more
+        Test that the 200 status code and an appropriate message are returned in case of purchasing more
         than places available in the competition.
         Args:
             client (FlaskClient): A Flask client
@@ -301,7 +303,7 @@ class TestIntegrationViews:
                                                           get_credentials_3,
                                                           get_existing_competition_and_club_4):
         """
-        Test that the 403 status code and an error message are returned in case of purchasing in a
+        Test that the 200 status code and an appropriate message are returned in case of purchasing in a
         sold out competition.
         Args:
             client (FlaskClient): A Flask client
@@ -311,8 +313,8 @@ class TestIntegrationViews:
         client.post('/showSummary', data=get_credentials_3)
 
         client_response = client.get(url_for(endpoint='book',
-                           competition=get_existing_competition_and_club_4['competition'],
-                           club=get_existing_competition_and_club_4['club']))
+                                             competition=get_existing_competition_and_club_4['competition'],
+                                             club=get_existing_competition_and_club_4['club']))
 
         data = client_response.data.decode('utf-8')
 
@@ -349,8 +351,8 @@ class TestIntegrationViews:
 
     @staticmethod
     def test_change_password_match_fails(client,
-                                   get_credentials_3,
-                                   get_existing_competition_and_club_4):
+                                         get_credentials_3,
+                                         get_existing_competition_and_club_4):
         """
         Test that the 406 status code and an error message are returned in case of incorrect
         changing password.
@@ -377,8 +379,8 @@ class TestIntegrationViews:
 
     @staticmethod
     def test_change_password_identical(client,
-                                         get_credentials_3,
-                                         get_existing_competition_and_club_4):
+                                       get_credentials_3,
+                                       get_existing_competition_and_club_4):
         """
         Test that the 406 status code and an error message are returned in case of changing
         password with identical password as current.
@@ -405,8 +407,8 @@ class TestIntegrationViews:
 
     @staticmethod
     def test_change_password_empty_field(client,
-                                       get_credentials_3,
-                                       get_existing_competition_and_club_4):
+                                         get_credentials_3,
+                                         get_existing_competition_and_club_4):
         """
         Test that the 406 status code and an error message are returned in case of changing
         password with at least one empty field.

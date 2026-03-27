@@ -1,5 +1,4 @@
 import sys
-import os
 import random
 import json
 import tempfile
@@ -14,20 +13,23 @@ json.dump({"competitions": []}, temp_comps_file)
 temp_clubs_file.close()
 temp_comps_file.close()
 
-BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))
-sys.path.insert(0, BASE_DIR)
+PATH = r"D:\WORK\Formation\Openclassrooms\Python\OpenClassrooms_Project_11\02_Repository\OpenClassrooms_Project_11"
+
+sys.path.insert(0, PATH)
 
 
-import utils, copy
+import utils
+import copy
 
 utils.get_clubs_path = lambda: temp_clubs_file.name
 utils.get_competitions_path = lambda: temp_comps_file.name
 
-with open(os.path.join(BASE_DIR, "clubs.json")) as f:
+with open(utils.CLUBS_PATH) as f:
     real_clubs = json.load(f)["clubs"]
 
-with open(os.path.join(BASE_DIR, "competitions.json")) as f:
+with open(utils.COMPETITIONS_PATH) as f:
     real_competitions = json.load(f)["competitions"]
+
 
 class TestPerfApp(HttpUser):
     wait_time = between(1, 3)

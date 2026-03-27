@@ -1,10 +1,12 @@
 import json
 import os
+import re
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 
-
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DIR = r"D:\WORK\Formation\Openclassrooms\Python\OpenClassrooms_Project_11\02_Repository"
+CLUBS_PATH = DIR + r"\OpenClassrooms_Project_11\clubs.json"
+COMPETITIONS_PATH = DIR + r"\OpenClassrooms_Project_11\competitions.json"
 
 
 class ValidationError(Exception):
@@ -15,39 +17,83 @@ class ValidationError(Exception):
 
 
 class NegativePlacesError(ValidationError):
-    pass
+    message = "Sorry, you should type a positive number."
+    tag = "Negative number"
+
+    def __init__(self):
+        super().__init__(self.message, self.tag)
 
 
 class Over12PlacesError(ValidationError):
-    pass
+    message = "Sorry, you are not allow to purchase more than 12 places for this competition."
+    tag = "Over 12 places"
+
+    def __init__(self):
+        super().__init__(self.message, self.tag)
 
 
 class NotEnoughPlacesError(ValidationError):
-    pass
+    message = "Sorry, there are not enough places available for this competition."
+    tag = "Not enough places"
+
+    def __init__(self):
+        super().__init__(self.message, self.tag)
 
 
 class NotEnoughPointsError(ValidationError):
-    pass
+    message = "Sorry, you do not have enough points to purchase."
+    tag = "Not enough points"
+
+    def __init__(self):
+        super().__init__(self.message, self.tag)
 
 
 class OutdatedCompetitionError(ValidationError):
-    pass
+    message = "Sorry, this competition is outdated. Booking not possible."
+    tag = "Outdated"
+
+    def __init__(self):
+        super().__init__(self.message, self.tag)
 
 
 class CompetitionNullPlacesError(ValidationError):
-    pass
+    message = "Sorry, this competition is sold out. Booking not possible."
+    tag = "Sold out"
+
+    def __init__(self):
+        super().__init__(self.message, self.tag)
 
 
-class PasswordEmptyFieldError(ValidationError):
-    pass
+class EmptyFieldError(ValidationError):
+    message = "Sorry, please fill all fields."
+    tag = "Empty field(s)"
+
+    def __init__(self):
+        super().__init__(self.message, self.tag)
 
 
 class PasswordsNotMatchError(ValidationError):
-    pass
+    message = "Sorry, passwords do not match."
+    tag = "Passwords not match"
+
+    def __init__(self):
+        super().__init__(self.message, self.tag)
 
 
 class PasswordNotDifferentError(ValidationError):
-    pass
+    message = "Sorry, you have to type a new different password."
+    tag = "Identical password"
+
+    def __init__(self):
+        super().__init__(self.message, self.tag)
+
+
+class MailAddressInvalidFormatError(ValidationError):
+    message = "Sorry, the e-mail address you entered has invalid format."
+    tag = "Invalid email format"
+
+    def __init__(self):
+        super().__init__(self.message, self.tag)
 
 
 def get_clubs_path() -> str:
@@ -59,9 +105,9 @@ def get_clubs_path() -> str:
     path = os.environ.get("CLUBS_JSON")
 
     if not path:
-        path = os.path.join(BASE_DIR, "clubs.json")
-
+        path = CLUBS_PATH
     return path
+
 
 def get_competitions_path() -> str:
     """
@@ -72,9 +118,9 @@ def get_competitions_path() -> str:
     path = os.environ.get("COMPETITIONS_JSON")
 
     if not path:
-        path = os.path.join(BASE_DIR, "competitions.json")
-
+        path = COMPETITIONS_PATH
     return path
+
 
 def load_clubs() -> list:
     """
@@ -82,9 +128,11 @@ def load_clubs() -> list:
     Returns:
         The list of clubs
     """
-    path = os.path.join(BASE_DIR, "clubs.json")
+    path = CLUBS_PATH
+
     with open(path) as c:
         return json.load(c)['clubs']
+
 
 def load_competitions() -> list:
     """
@@ -92,14 +140,17 @@ def load_competitions() -> list:
     Returns:
         The sorted list of competitions
     """
-    path = os.path.join(BASE_DIR, "competitions.json")
+    path = COMPETITIONS_PATH
+
     with open(path) as comps:
         list_of_competitions = json.load(comps)['competitions']
         return sorted(list_of_competitions, key=lambda c: c['date'])
 
+
 competitions = []
 
 clubs = []
+
 
 def save_clubs() -> None:
     """
@@ -110,6 +161,7 @@ def save_clubs() -> None:
         list_of_clubs = {"clubs": clubs}
         json.dump(list_of_clubs, f, indent=4)
 
+
 def save_competitions() -> None:
     """
     Method that saves the competitions json file
@@ -119,8 +171,10 @@ def save_competitions() -> None:
         list_of_competitions = {"competitions": sorted(competitions, key=lambda c: c['date'])}
         json.dump(list_of_competitions, f, indent=4)
 
+
 for competition in competitions:
     competition['is_past'] = datetime.strptime(competition['date'], "%Y-%m-%d %H:%M:%S") < datetime.now()
+
 
 def update_club_booked_places(club: dict, places: int, competition_name: str) -> None:
     """
@@ -141,6 +195,7 @@ def update_club_booked_places(club: dict, places: int, competition_name: str) ->
     clubs.append(club)
     save_clubs()
 
+
 def update_competition_available_places(the_competition: dict, places: int) -> None:
     """
     Method that updates the competition available places based on the number of places
@@ -156,6 +211,7 @@ def update_competition_available_places(the_competition: dict, places: int) -> N
 
     save_competitions()
 
+
 def add_club(name: str, email: str, password: str, points: str) -> None:
     """
     Method that adds a club to the clubs list
@@ -167,6 +223,7 @@ def add_club(name: str, email: str, password: str, points: str) -> None:
     """
     clubs.append({"name": name, "email": email, "password": password, "points": points})
     save_clubs()
+
 
 def update_club_password(club: dict, password: str) -> dict:
     """
@@ -183,7 +240,8 @@ def update_club_password(club: dict, password: str) -> dict:
     save_clubs()
     return club
 
-def check_all_fields_filled_out(name: str, email: str, password: str, password2: str) -> bool:
+
+def check_signup_all_fields_filled_out(name: str, email: str, password: str, password2: str) -> bool:
     """
     Method that checks if all the fields are filled out
     Args:
@@ -199,6 +257,22 @@ def check_all_fields_filled_out(name: str, email: str, password: str, password2:
         return False
     return True
 
+
+def check_login_all_fields_filled_out(name: str, password: str) -> bool:
+    """
+    Method that checks if all the fields are filled out
+    Args:
+        name (str): The name of the club
+        password (str): The password of the club
+
+    Returns:
+        A boolean indicating if all the fields are filled out
+    """
+    if len(name) == 0 or len(password) == 0:
+        return False
+    return True
+
+
 def validate_places(places_required: int, club: dict, the_competition: dict) -> None:
     """
     Method that validates the places required
@@ -206,46 +280,29 @@ def validate_places(places_required: int, club: dict, the_competition: dict) -> 
         places_required (int): The number of places required
         club (dict): The club dictionary
         the_competition (dict): The competition dictionary
-
-    Returns:
-        None
     """
     booked_places = int(club.get("booked_places", {}).get(the_competition["name"], 0))
 
     cumulative_places = places_required + booked_places
 
     if places_required <= 0:
-        raise NegativePlacesError(
-            message = "Sorry, you should type a positive number.",
-            tag = "Negative number"
-        )
+        raise NegativePlacesError()
 
     if cumulative_places > 12:
-        raise Over12PlacesError(
-            message = "Sorry, you are not allow to purchase more than 12 places for this competition.",
-            tag = "Over 12 places"
-        )
+        raise Over12PlacesError()
 
     if places_required > int(the_competition['number_of_places']):
-        raise NotEnoughPlacesError(
-            message = "Sorry, there are not enough places available for this competition.",
-            tag = "Not enough places"
-        )
+        raise NotEnoughPlacesError()
 
     if places_required > int(club['points']):
-        raise NotEnoughPointsError(
-            message = "Sorry, you do not have enough points to purchase.",
-            tag = "Not enough points"
-        )
+        raise NotEnoughPointsError()
+
 
 def validate_competition(the_competition: dict) -> None:
     """
     Method that validates the competition
     Args:
         the_competition (dict): The competition dictionary
-
-    Returns:
-        None
     """
     now = datetime.now()
 
@@ -254,16 +311,11 @@ def validate_competition(the_competition: dict) -> None:
     competition_places = int(the_competition['number_of_places'])
 
     if now > competition_date:
-        raise OutdatedCompetitionError(
-            message = "Sorry, this competition is outdated. Booking not possible.",
-            tag = "Outdated"
-        )
+        raise OutdatedCompetitionError()
 
     if competition_places == 0:
-        raise CompetitionNullPlacesError(
-            message = "Sorry, this competition is sold out. Booking not possible.",
-            tag = "Sold out"
-        )
+        raise CompetitionNullPlacesError()
+
 
 def validate_password(password: str, password2: str, club: dict) -> None:
     """
@@ -272,24 +324,52 @@ def validate_password(password: str, password2: str, club: dict) -> None:
         password (str): The password of the club.
         password2 (str): The password of the club.
         club (dict): The club dictionary.
-
-    Returns:
-        None
     """
     if len(password) == 0 or len(password2) == 0:
-        raise PasswordEmptyFieldError(
-            message = "Sorry, please fill all fields.",
-            tag = "Empty field(s)"
-        )
+        raise EmptyFieldError()
 
     if password != password2:
-        raise PasswordsNotMatchError(
-            message = "Sorry, passwords do not match.",
-            tag = "Passwords not match"
-        )
+        raise PasswordsNotMatchError()
 
     if check_password_hash(club['password'], password):
-        raise PasswordNotDifferentError(
-            message = "Sorry, you have to type a new different password.",
-            tag = "Identical password"
-        )
+        raise PasswordNotDifferentError()
+
+
+def validate_profile_fields(club_name: str,
+                            club_email: str,
+                            club_password: str,
+                            club_password_confirmation: str) -> None:
+    """
+    Method that validates the profile fields
+    Args:
+        club_name (str): The name of the club
+        club_email (str): The email of the club
+        club_password (str): The password of the club
+        club_password_confirmation (str): The password of the club
+    """
+    if not check_signup_all_fields_filled_out(name=club_name,
+                                              email=club_email,
+                                              password=club_password,
+                                              password2=club_password_confirmation):
+        raise EmptyFieldError()
+
+
+def validate_login_fields(club_name: str, club_password: str) -> None:
+    """
+    Method that validates the login page fields
+    Args:
+        club_name (str): The name of the club
+        club_password (str): The password of the club
+    """
+    if not check_login_all_fields_filled_out(name=club_name, password=club_password):
+        raise EmptyFieldError()
+
+
+def validate_email_format(club_email: str) -> None:
+    """
+    Method that validates the email format
+    Args:
+        club_email (str): The email of the club
+    """
+    if not re.match(r'\b[A-Za-z0-9._+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b', club_email):
+        raise MailAddressInvalidFormatError()

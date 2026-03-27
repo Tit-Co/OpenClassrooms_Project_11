@@ -20,6 +20,10 @@ body {
     margin-top: 100px;
 }
 
+body img {
+    width: 114px;
+}
+
 main {
 
 }
