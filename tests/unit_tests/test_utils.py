@@ -1,5 +1,6 @@
 import pytest
 import utils
+import exceptions
 
 from werkzeug.security import check_password_hash
 
@@ -195,7 +196,7 @@ class TestUnitUtils:
             utils.validate_places(places_required=-2,
                                   club=club,
                                   the_competition=competition_name)
-        except utils.ValidationError as e:
+        except exceptions.ValidationError as e:
             assert e.message == "Sorry, you should type a positive number."
             assert e.tag == "Negative number"
 
@@ -215,7 +216,7 @@ class TestUnitUtils:
             utils.validate_places(places_required=13,
                                   club=club,
                                   the_competition=competition)
-        except utils.ValidationError as e:
+        except exceptions.ValidationError as e:
             assert e.message == "Sorry, you are not allow to purchase more than 12 places for this competition."
             assert e.tag == "Over 12 places"
 
@@ -235,7 +236,7 @@ class TestUnitUtils:
             utils.validate_places(places_required=5,
                                   club=club,
                                   the_competition=competition)
-        except utils.ValidationError as e:
+        except exceptions.ValidationError as e:
             assert e.message == "Sorry, there are not enough places available for this competition."
             assert e.tag == "Not enough places"
 
@@ -256,7 +257,7 @@ class TestUnitUtils:
             utils.validate_places(places_required=6,
                                   club=club,
                                   the_competition=competition)
-        except utils.ValidationError as e:
+        except exceptions.ValidationError as e:
             assert e.message == "Sorry, you do not have enough points to purchase."
             assert e.tag == "Not enough points"
 
@@ -273,7 +274,7 @@ class TestUnitUtils:
 
         try:
             utils.validate_competition(the_competition=competition)
-        except utils.ValidationError as e:
+        except exceptions.ValidationError as e:
             assert e.message == "Sorry, this competition is outdated. Booking not possible."
             assert e.tag == "Outdated"
 
@@ -290,7 +291,7 @@ class TestUnitUtils:
 
         try:
             utils.validate_competition(the_competition=competition)
-        except utils.ValidationError as e:
+        except exceptions.ValidationError as e:
             assert e.message == "Sorry, this competition is sold out. Booking not possible."
             assert e.tag == "Sold out"
 
@@ -302,7 +303,7 @@ class TestUnitUtils:
                                           get_wrong_details["password"],
                                           get_wrong_details["password2"])
 
-        except utils.ValidationError as e:
+        except exceptions.ValidationError as e:
 
             assert e.message == "Sorry, please fill all fields."
             assert e.tag == "Empty field(s)"
@@ -311,7 +312,7 @@ class TestUnitUtils:
     def test_validate_login_fields_fails(client, get_wrong_details):
         try:
             utils.validate_login_fields(get_wrong_details["email"], get_wrong_details["password"])
-        except utils.ValidationError as e:
+        except exceptions.ValidationError as e:
 
             assert e.message == "Sorry, please fill all fields."
             assert e.tag == "Empty field(s)"
@@ -322,7 +323,7 @@ class TestUnitUtils:
             utils.validate_email_format(get_details["email"])
             assert True
 
-        except utils.ValidationError as e:
+        except exceptions.ValidationError as e:
             assert e.message == "Sorry, the e-mail address you entered has invalid format."
             assert e.tag == "Invalid email format"
 
@@ -331,6 +332,13 @@ class TestUnitUtils:
         try:
             utils.validate_email_format(get_wrong_details["email"])
 
-        except utils.ValidationError as e:
+        except exceptions.ValidationError as e:
             assert e.message == "Sorry, the e-mail address you entered has invalid format."
             assert e.tag == "Invalid email format"
+
+    @staticmethod
+    def test_copy_clubs_for_board():
+        copy_clubs = utils.copy_clubs_for_board()
+
+        assert len(copy_clubs) == len(utils.clubs)
+        assert "color" in copy_clubs[0].keys()

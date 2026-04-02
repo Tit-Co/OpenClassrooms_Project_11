@@ -81,10 +81,10 @@ class TestPerfApp(HttpUser):
 
     @task(3)
     def book_places(self):
-        while True:
+        competition = random.choice(utils.competitions)
+
+        while competition.get("is_past"):
             competition = random.choice(utils.competitions)
-            if not competition.get("is_past"):
-                break
 
         competition["number_of_places"] = 60
 

@@ -13,6 +13,7 @@ app.config["COMPETITIONS_JSON"] = os.environ.get("COMPETITIONS_JSON")
 CLUB_POINTS = 15
 
 import utils
+import exceptions
 
 utils.clubs = utils.load_clubs()
 utils.competitions = utils.load_competitions()
@@ -76,19 +77,20 @@ def profile_post():
     try:
         utils.validate_profile_fields(club_name, club_email, club_password, club_password_confirmation)
 
-    except utils.ValidationError as e:
+    except exceptions.ValidationError as e:
         flash(message=e.message)
         return redirect(location=url_for('sign_up'))
 
     try:
         utils.validate_email_format(club_email)
 
-    except utils.ValidationError as e:
+    except exceptions.ValidationError as e:
         flash(message=e.message)
         return redirect(location=url_for('sign_up'))
 
-    existing_club = next((c for c in utils.clubs if c['email'] == club_email or c['name'] == club_name), None)
-    if existing_club is None:
+    found_clubs = [c for c in utils.clubs if c['email'] == club_email or c['name'] == club_name]
+
+    if not found_clubs:
         if club_password != club_password_confirmation:
             flash(message='Sorry, passwords do not match')
             return redirect(location=url_for('sign_up'))
@@ -143,7 +145,7 @@ def change_password(club):
                 utils.validate_password(password=club_password,
                                         password2=club_password_confirmation,
                                         club=the_club)
-            except utils.ValidationError as e:
+            except exceptions.ValidationError as e:
                 flash(e.message)
                 return render_template(template_name_or_list='change_password.html',
                                        club=the_club,
@@ -192,7 +194,7 @@ def show_summary_post():
     """
     try:
         utils.validate_login_fields(request.form['email'], request.form['password'])
-    except utils.ValidationError as e:
+    except exceptions.ValidationError as e:
         flash(message=e.message)
         return render_template(template_name_or_list="index.html", error=e.tag), 404
 
@@ -232,7 +234,7 @@ def book(competition, club):
         try:
             utils.validate_competition(the_competition=found_competition)
 
-        except utils.ValidationError as e:
+        except exceptions.ValidationError as e:
             flash(message=e.message)
 
             the_club = next((a_club for a_club in utils.clubs if a_club['name'] == club), None)
@@ -273,7 +275,7 @@ def purchase_places():
                               club=club,
                               the_competition=competition)
 
-    except utils.ValidationError as e:
+    except exceptions.ValidationError as e:
         flash(message=e.message)
         return render_template(template_name_or_list='welcome.html',
                                club=club,
@@ -301,14 +303,7 @@ def points_board():
     Returns:
         The points board template.
     """
-    clubs_for_board = []
-    for club in utils.clubs:
-        club_copy = club.copy()
-        if utils.clubs.index(club) % 2 == 0:
-            club_copy["color"] = "#cccccc"
-        else:
-            club_copy["color"] = "#aaaaaa"
-        clubs_for_board.append(club_copy)
+    clubs_for_board = utils.copy_clubs_for_board()
 
     club = session.get('club')
 

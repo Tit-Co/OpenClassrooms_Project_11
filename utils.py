@@ -4,96 +4,11 @@ import re
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 
+import exceptions
+
 DIR = r"D:\WORK\Formation\Openclassrooms\Python\OpenClassrooms_Project_11\02_Repository"
 CLUBS_PATH = DIR + r"\OpenClassrooms_Project_11\clubs.json"
 COMPETITIONS_PATH = DIR + r"\OpenClassrooms_Project_11\competitions.json"
-
-
-class ValidationError(Exception):
-    def __init__(self, message, tag):
-        self.message = message
-        self.tag = tag
-        super().__init__(message)
-
-
-class NegativePlacesError(ValidationError):
-    message = "Sorry, you should type a positive number."
-    tag = "Negative number"
-
-    def __init__(self):
-        super().__init__(self.message, self.tag)
-
-
-class Over12PlacesError(ValidationError):
-    message = "Sorry, you are not allow to purchase more than 12 places for this competition."
-    tag = "Over 12 places"
-
-    def __init__(self):
-        super().__init__(self.message, self.tag)
-
-
-class NotEnoughPlacesError(ValidationError):
-    message = "Sorry, there are not enough places available for this competition."
-    tag = "Not enough places"
-
-    def __init__(self):
-        super().__init__(self.message, self.tag)
-
-
-class NotEnoughPointsError(ValidationError):
-    message = "Sorry, you do not have enough points to purchase."
-    tag = "Not enough points"
-
-    def __init__(self):
-        super().__init__(self.message, self.tag)
-
-
-class OutdatedCompetitionError(ValidationError):
-    message = "Sorry, this competition is outdated. Booking not possible."
-    tag = "Outdated"
-
-    def __init__(self):
-        super().__init__(self.message, self.tag)
-
-
-class CompetitionNullPlacesError(ValidationError):
-    message = "Sorry, this competition is sold out. Booking not possible."
-    tag = "Sold out"
-
-    def __init__(self):
-        super().__init__(self.message, self.tag)
-
-
-class EmptyFieldError(ValidationError):
-    message = "Sorry, please fill all fields."
-    tag = "Empty field(s)"
-
-    def __init__(self):
-        super().__init__(self.message, self.tag)
-
-
-class PasswordsNotMatchError(ValidationError):
-    message = "Sorry, passwords do not match."
-    tag = "Passwords not match"
-
-    def __init__(self):
-        super().__init__(self.message, self.tag)
-
-
-class PasswordNotDifferentError(ValidationError):
-    message = "Sorry, you have to type a new different password."
-    tag = "Identical password"
-
-    def __init__(self):
-        super().__init__(self.message, self.tag)
-
-
-class MailAddressInvalidFormatError(ValidationError):
-    message = "Sorry, the e-mail address you entered has invalid format."
-    tag = "Invalid email format"
-
-    def __init__(self):
-        super().__init__(self.message, self.tag)
 
 
 def get_clubs_path() -> str:
@@ -286,16 +201,16 @@ def validate_places(places_required: int, club: dict, the_competition: dict) -> 
     cumulative_places = places_required + booked_places
 
     if places_required <= 0:
-        raise NegativePlacesError()
+        raise exceptions.NegativePlacesError()
 
     if cumulative_places > 12:
-        raise Over12PlacesError()
+        raise exceptions.Over12PlacesError()
 
     if places_required > int(the_competition['number_of_places']):
-        raise NotEnoughPlacesError()
+        raise exceptions.NotEnoughPlacesError()
 
     if places_required > int(club['points']):
-        raise NotEnoughPointsError()
+        raise exceptions.NotEnoughPointsError()
 
 
 def validate_competition(the_competition: dict) -> None:
@@ -311,10 +226,10 @@ def validate_competition(the_competition: dict) -> None:
     competition_places = int(the_competition['number_of_places'])
 
     if now > competition_date:
-        raise OutdatedCompetitionError()
+        raise exceptions.OutdatedCompetitionError()
 
     if competition_places == 0:
-        raise CompetitionNullPlacesError()
+        raise exceptions.CompetitionNullPlacesError()
 
 
 def validate_password(password: str, password2: str, club: dict) -> None:
@@ -326,13 +241,13 @@ def validate_password(password: str, password2: str, club: dict) -> None:
         club (dict): The club dictionary.
     """
     if len(password) == 0 or len(password2) == 0:
-        raise EmptyFieldError()
+        raise exceptions.EmptyFieldError()
 
     if password != password2:
-        raise PasswordsNotMatchError()
+        raise exceptions.PasswordsNotMatchError()
 
     if check_password_hash(club['password'], password):
-        raise PasswordNotDifferentError()
+        raise exceptions.PasswordNotDifferentError()
 
 
 def validate_profile_fields(club_name: str,
@@ -351,7 +266,7 @@ def validate_profile_fields(club_name: str,
                                               email=club_email,
                                               password=club_password,
                                               password2=club_password_confirmation):
-        raise EmptyFieldError()
+        raise exceptions.EmptyFieldError()
 
 
 def validate_login_fields(club_name: str, club_password: str) -> None:
@@ -362,7 +277,7 @@ def validate_login_fields(club_name: str, club_password: str) -> None:
         club_password (str): The password of the club
     """
     if not check_login_all_fields_filled_out(name=club_name, password=club_password):
-        raise EmptyFieldError()
+        raise exceptions.EmptyFieldError()
 
 
 def validate_email_format(club_email: str) -> None:
@@ -372,4 +287,17 @@ def validate_email_format(club_email: str) -> None:
         club_email (str): The email of the club
     """
     if not re.match(r'\b[A-Za-z0-9._+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b', club_email):
-        raise MailAddressInvalidFormatError()
+        raise exceptions.MailAddressInvalidFormatError()
+
+
+def copy_clubs_for_board() -> list:
+    clubs_for_board = []
+    for club in clubs:
+        club_copy = club.copy()
+        if clubs.index(club) % 2 == 0:
+            club_copy["color"] = "#cccccc"
+        else:
+            club_copy["color"] = "#aaaaaa"
+        clubs_for_board.append(club_copy)
+
+    return clubs_for_board

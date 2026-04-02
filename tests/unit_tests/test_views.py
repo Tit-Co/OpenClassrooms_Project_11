@@ -1,4 +1,3 @@
-import time
 import pytest
 import utils
 
@@ -71,7 +70,7 @@ class TestUnitViews:
         Test that the summary page is returned with a 200 status code in case of fine
         authentication
         Args:
-            get_credentials (dict): The credentials
+            get_bad_credentials (dict): The credentials
             client (FlaskClient): A Flask client
         """
         client_response = client.post('/showSummary', data=get_bad_credentials)
