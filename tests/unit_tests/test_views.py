@@ -33,8 +33,10 @@ class TestUnitViews:
         data = client_response.data.decode('utf-8')
 
         assert "Welcome to the GÜDLFT Portal!" in data
-        assert ('Please enter your secretary email and your password to continue '
-                'or <a href="/signUp">sign up</a>') in data
+        assert (
+            'Please enter your secretary email and your password to continue '
+            'or <a href="/signUp">sign up</a>'
+        ) in data
         assert "Email:" in data
         assert "Password:" in data
 
@@ -231,7 +233,7 @@ class TestUnitViews:
         Test that the 200 status code and appropriate information are returned in case of
         displaying points board.
         Args:
-            client ():
+            client (FlaskClient): A Flask client
         """
         client_response = client.get('/pointsBoard')
         data = client_response.data.decode('utf-8')
@@ -241,12 +243,25 @@ class TestUnitViews:
 
     @staticmethod
     def test_post_signup_status_code_ok(client, get_details_2):
+        """
+        Test that the 200 status code is returned in case of signup.
+        Args:
+            client (FlaskClient): A Flask client
+            get_details_2 (dict): The details for the signup
+        """
         client_response = client.post('/profile', data=get_details_2, follow_redirects=True)
 
         assert client_response.status_code == 200
 
     @staticmethod
     def test_post_signup_returns_welcome(client, get_details_2):
+        """
+        Test that the profile page is returned with appropriate information from the club in case
+        of signup
+        Args:
+            client (FlaskClient): A Flask client
+            get_details_2 (dict): The details for the signup
+        """
         client_response = client.post('/profile', data=get_details_2, follow_redirects=True)
 
         data = client_response.data.decode('utf-8')
@@ -259,6 +274,13 @@ class TestUnitViews:
 
     @staticmethod
     def test_post_signup_fails(client, get_wrong_details_2):
+        """
+        Test that the welcome page and an error message are returned in case of signup with empty
+        field(s).
+        Args:
+            client (FlaskClient): A Flask client
+            get_wrong_details_2 (dict): The details for the signup.
+        """
         client_response = client.post('/profile', data=get_wrong_details_2, follow_redirects=True)
 
         data = client_response.data.decode('utf-8')

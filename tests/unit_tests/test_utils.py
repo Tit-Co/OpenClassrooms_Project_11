@@ -297,6 +297,12 @@ class TestUnitUtils:
 
     @staticmethod
     def test_validate_profile_fields_fails(client, get_wrong_details):
+        """
+        Tests the profile validation process with wrong profile fields.
+        Args:
+            client (FlaskClient): A Flask client
+            get_wrong_details (dict): The details for the signup.
+        """
         try:
             utils.validate_profile_fields(get_wrong_details["name"],
                                           get_wrong_details["email"],
@@ -310,6 +316,12 @@ class TestUnitUtils:
 
     @staticmethod
     def test_validate_login_fields_fails(client, get_wrong_details):
+        """
+        Tests the login validation process with wrong login fields.
+        Args:
+            client (FlaskClient): A Flask client
+            get_wrong_details (dict): The details for the login.
+        """
         try:
             utils.validate_login_fields(get_wrong_details["email"], get_wrong_details["password"])
         except exceptions.ValidationError as e:
@@ -319,6 +331,12 @@ class TestUnitUtils:
 
     @staticmethod
     def test_validate_email_format_ok(client, get_details):
+        """
+        Tests the email format validation process with correct format.
+        Args:
+            client (FlaskClient): A Flask client
+            get_details (dict): The details for the email field.
+        """
         try:
             utils.validate_email_format(get_details["email"])
             assert True
@@ -329,6 +347,12 @@ class TestUnitUtils:
 
     @staticmethod
     def test_validate_email_format_fails(client, get_wrong_details):
+        """
+        Tests the email format validation process with incorrect format.
+        Args:
+            client (FlaskClient): A Flask client
+            get_wrong_details (dict): The details for the email field.
+        """
         try:
             utils.validate_email_format(get_wrong_details["email"])
 
@@ -338,6 +362,9 @@ class TestUnitUtils:
 
     @staticmethod
     def test_copy_clubs_for_board():
+        """
+        Tests the club copy validation process.
+        """
         copy_clubs = utils.copy_clubs_for_board()
 
         assert len(copy_clubs) == len(utils.clubs)

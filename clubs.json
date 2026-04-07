@@ -31,12 +31,6 @@
             "points": "15"
         },
         {
-            "name": "Iron Temple",
-            "email": "admin@irontemple.com",
-            "password": "scrypt:32768:8:1$rHMWqkkiOSz7QiYU$e1a798fc6d464425359fb999db786ffbe39f6059e195d6d22a15e3ed70be3b5630e1d828399ca241f9d94e109ee5b350067f14a8054079344f01495c73594021",
-            "points": "4"
-        },
-        {
             "name": "Olympic Lifters",
             "email": "contact@olympiclifters.com",
             "password": "scrypt:32768:8:1$CO1XjG2GYak7bGad$906886f7afc2f66ac120f12b263e195fd44283a3cf0a39f963722ca25fc62e0909629165ff184ab67e43dfb44b4ca87ec7448ce95bcd896af2d2c32a31ffa604",
@@ -71,6 +65,12 @@
             "email": "team@weightroom.com",
             "password": "scrypt:32768:8:1$38I8jEaWVYS5jgcA$0b29c9aa0e7f52b2634516d46b312ba429d2748fd4d72973f83275d4ada39907a6bae0389d31a868acdd4b5b43363515186f86e5f7419f9253d092c94d2a9185",
             "points": "15"
+        },
+        {
+            "name": "Iron Temple",
+            "email": "admin@irontemple.com",
+            "password": "scrypt:32768:8:1$rHMWqkkiOSz7QiYU$e1a798fc6d464425359fb999db786ffbe39f6059e195d6d22a15e3ed70be3b5630e1d828399ca241f9d94e109ee5b350067f14a8054079344f01495c73594021",
+            "points": "4"
         }
     ]
 }

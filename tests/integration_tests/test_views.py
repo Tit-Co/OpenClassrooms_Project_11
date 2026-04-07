@@ -35,8 +35,10 @@ class TestIntegrationViews:
 
         assert "Welcome to the GÜDLFT Portal!" in data
         assert "Authentication" in data
-        assert ('Please enter your secretary email and your password to continue '
-                'or <a href="/signUp">sign up</a>') in data
+        assert (
+            'Please enter your secretary email and your password to continue '
+            'or <a href="/signUp">sign up</a>'
+        ) in data
         assert "Email:" in data
         assert "Password:" in data
 

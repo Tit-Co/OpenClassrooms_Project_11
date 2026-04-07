@@ -288,8 +288,9 @@ def purchase_places():
 
     utils.update_competition_available_places(the_competition=competition, places=places_required)
 
-    flash(message=f"Great! Booking of {places_required} place(s) for "
-                  f"{competition['name']} competition complete!")
+    flash(message=f"""
+        Great! Booking of {places_required} place(s) for {competition['name']} competition complete!
+    """)
 
     return render_template(template_name_or_list='welcome.html',
                            club=club,
